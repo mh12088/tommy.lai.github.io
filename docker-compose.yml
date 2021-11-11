@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+
+  biometric-login-demo:
+    container_name: biometric-login-demo
+    build: .
+    ports:
+      - 4200:4200

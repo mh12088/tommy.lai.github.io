@@ -86,8 +86,10 @@ export class WebAuthnComponent implements OnInit {
       if (isConfirm) this.webAuthnSignup(user);
     } else {
       const isConfirm = confirm("Do you confirm to disable biometric login?");
-      user.credentials = [];
-      if (isConfirm) this.mockService.updateUser(user);
+      if (isConfirm) {
+        user.credentials = [];
+        this.mockService.updateUser(user);
+      }
     }
   }
 

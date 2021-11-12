@@ -101,10 +101,10 @@ export class WebAuthnComponent implements OnInit {
   signin(user: User) {
     const userFromDB = this.mockService.getUserByMobileNumber(user.mobileNumber);
     this.webAuthnService.webAuthnSignin(userFromDB)
-      .then((attestion) => {
+      .then((assertion) => {
         alert("Authentication Successful");
-        console.log("Authentication Successful: ", attestion);
-        // TODO: Call server to validate attestion
+        console.log("Authentication Successful: ", assertion);
+        // TODO: Call server to validate assertion
         // When server return ok,login successful else login failed
 
       })

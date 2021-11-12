@@ -29,21 +29,21 @@ export class WebAuthnComponent implements OnInit {
   }
 
   get email(): any {
-    return this.userForm.get("email");
+    return this.userForm.get('email');
   }
 
   get mobileNumber(): any {
-    return this.userForm.get("mobileNumber");
+    return this.userForm.get('mobileNumber');
   }
 
   get isEnableBiometricLogin(): any {
-    return this.userForm.get("isEnableBiometricLogin")
+    return this.userForm.get('isEnableBiometricLogin')
   }
 
   signup(): void {
     const user: User = {
-      mobileNumber: this.userForm.get("mobileNumber").value,
-      email: this.userForm.get("email").value,
+      mobileNumber: this.userForm.get('mobileNumber').value,
+      email: this.userForm.get('email').value,
       credentials: [],
     };
     const errorMsgList = this.mockService.validateCreateUser(user);
@@ -54,8 +54,8 @@ export class WebAuthnComponent implements OnInit {
     const userFromDB = this.mockService.createUser(user);
     this.userList = this.mockService.getAllUser();
     alert("Your Account Has been Created.");
-    if (this.userForm.get("isEnableBiometricLogin").value) {
-      alert("Enable biometric login now.");
+    if (this.userForm.get('isEnableBiometricLogin').value) {
+      alert("Enable biometric login...");
       this.webAuthnSignup(userFromDB);
     }
   }

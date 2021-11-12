@@ -82,10 +82,10 @@ export class WebAuthnComponent implements OnInit {
 
   enableBiometricLogin(user: User): void {
     if (user.credentials.length === 0) {
-      const isConfirm = confirm("Do you confirm to enable biometric login?");
+      const isConfirm = confirm("Are you sure you want to enable biometric login?");
       if (isConfirm) this.webAuthnSignup(user);
     } else {
-      const isConfirm = confirm("Do you confirm to disable biometric login?");
+      const isConfirm = confirm("Are you sure you want to disable biometric login?");
       if (isConfirm) {
         user.credentials = [];
         this.mockService.updateUser(user);
@@ -94,7 +94,8 @@ export class WebAuthnComponent implements OnInit {
   }
 
   deleteAccount(user: User): void {
-    this.mockService.deleteUser(user);
+    const isConfirm = confirm(`Are you sure you want to delete this user (${user.email})?`);
+    if(isConfirm) this.mockService.deleteUser(user);
   }
 
   signin(user: User) {

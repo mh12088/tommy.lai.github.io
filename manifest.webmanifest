@@ -5,7 +5,7 @@
   "background_color": "#fafafa",
   "display": "standalone",
   "scope": "./",
-  "start_url": "./?isPWA=true",
+  "start_url": "https://mh12088.github.io/tommy.lai.github.io/isPWA=true",
   "icons": [
     {
       "src": "assets/icons/icon-72x72.png",

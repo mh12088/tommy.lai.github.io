@@ -19,17 +19,12 @@
     function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-TFJ9H2W5Q3');
-  </script>
-  <script>
-    // Setup a listener to track Add to Homescreen events.
-    window.addEventListener('beforeinstallprompt', e => {
-      e.userChoice.then(choiceResult => {
-        gtag('event', 'aaa', {
-          'event_category': 'bbb',
-          'event_label': 'ccc'
-        });
-      });
-    });
+    gtag('event', 'page_view', {
+      page_title: 'dddd',
+      page_location: 'lalala',
+      page_path: '/dsa/dsada',
+      send_to: 'G-TFJ9H2W5Q3'
+    })
   </script>
   <noscript>Please enable JavaScript to continue using this application.</noscript>
 <script src="runtime-es2015.0dae8cbc97194c7caed4.js" type="module"></script><script src="runtime-es5.0dae8cbc97194c7caed4.js" nomodule defer></script><script src="polyfills-es5.177e85a9724683782539.js" nomodule defer></script><script src="polyfills-es2015.f332a089ad1600448873.js" type="module"></script><script src="main-es2015.eedf2ceb0cbd3599e018.js" type="module"></script><script src="main-es5.eedf2ceb0cbd3599e018.js" nomodule defer></script></body>

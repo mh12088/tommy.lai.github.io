@@ -1,11 +1,11 @@
 {
-  "name": "biometric-login-demo",
-  "short_name": "biometric-login-demo",
+  "name": "biometric-login-demo-pwa",
+  "short_name": "biometric-login-demo-pwa",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",
   "scope": "./",
-  "start_url": "./",
+  "start_url": "./?isPWA=true",
   "icons": [
     {
       "src": "assets/icons/icon-72x72.png",

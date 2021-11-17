@@ -23,7 +23,13 @@
   <script>
     window.addEventListener('beforeinstallprompt', e => {
       e.userChoice.then(choiceResult => {
-        gtag('event', 'isPWA', { 'value': 'Y' });
+        console.log(choiceResult);
+        gtag('event', 'is_pwa', {
+          'event_label': 'Is PWA',
+          'event_category': 'is_pwa',
+          'non_interaction': true
+        });
+
       });
     });
   </script>

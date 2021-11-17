@@ -23,7 +23,7 @@
   <script>
     window.addEventListener('beforeinstallprompt', e => {
       e.userChoice.then(choiceResult => {
-        ga('send', 'event', 'A2H', choiceResult.outcome);
+        gtag('event', 'isPWA', { 'value': 'Y' });
       });
     });
   </script>

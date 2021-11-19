@@ -1,5 +1,28 @@
 (function () {
     'use strict';
+    function gtag() {
+        const script = document.createElement('script');
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-TFJ9H2W5Q3';
+        script.async = true;
+        document.getElementsByTagName('head')[0].appendChild(script);
+        const gtagEl = document.createElement('script');
+        const gtagBody = document.createTextNode(`
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        `);
+        gtagEl.appendChild(gtagBody);
+        document.body.appendChild(gtagEl);
+    }
+    this.gtag();
+  
+    function logEvent(event, category, label, value) {
+        gtag('event', event, {
+            event_category: category,
+            event_label: label,
+            value: value
+        });
+        console.log('gtag event captured...');
+    }
 
     /**
      * @license
@@ -1954,6 +1977,8 @@ ${msgIdle}`, { headers: this.adapter.newHeaders({ 'Content-Type': 'text/plain' }
                 event.respondWith(this.debugger.handleFetch(req));
                 return;
             }
+
+            logEvent('pwa_call_api', requestUrlObj.origin, requestUrlObj.path, requestUrlObj.search);
             // If the SW is in a broken state where it's not safe to handle requests at all,
             // returning causes the request to fall back on the network. This is preferred over
             // `respondWith(fetch(req))` because the latter still shows in DevTools that the

@@ -1,0 +1,77 @@
+.pwa-install-promotion-container {
+    position: absolute;
+    width: 320px;
+    height: 100px;
+    background-color: #1976d2;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    &.ios {
+        background-color: #1976d2;
+        opacity: 0.9;
+        border-radius: 25px;
+        height: 70px;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        .desc {
+            margin-left: 10px;
+            color: white;
+            font-weight: bold;
+        }
+        .arrow-box {
+            background: #1976d2;
+            transform: rotate(45deg);
+            height: 30px;
+            width: 100%;
+            bottom: -13px;
+            max-width: 30px;
+            z-index: -1;
+            position: absolute;
+        }
+        .close-btn {
+            cursor: pointer;
+            font-weight: 1000;
+            position: absolute;
+            right: 15px;
+            color: white;
+            font-size: 20px;
+            top: -2px;
+        }
+    }
+    &.android {
+        .title {
+            margin-left: 10px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .buttons {
+            width: 100%;
+            text-align: center;
+            .btn {
+                padding: 5px;
+                min-width: 120px;
+                height: auto;
+                background-color: white;
+                border: 1px solid white;
+                color: #1976d2;;
+                cursor: pointer;
+                border-radius: 4px;
+                height: 30px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 25px;
+                font-weight: bold;
+            }
+            .close-btn {
+                margin-left: 10px;
+                font-weight: bold;
+                color: white;
+            }
+        }
+    }
+}

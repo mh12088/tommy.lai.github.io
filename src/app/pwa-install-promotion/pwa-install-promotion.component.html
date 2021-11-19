@@ -1,0 +1,35 @@
+<h3>
+    Device:
+    {{ device}}
+</h3>
+<h3>
+    Status:
+    {{installStatus}}
+</h3>
+<a href="http://example.com/" target="_blank" class="app-logo" (click)="event();">test event</a>
+<ng-container *ngIf="installStatus !== 'Installed'">
+    <ng-container [ngSwitch]="device">
+        <ng-container *ngSwitchCase="'android'">
+            <div class="pwa-install-promotion-container android" *ngIf="showPromotion">
+                <p class="title">Install web app</p>
+                <div class="buttons">
+                    <button (click)="addToHomeScreen()" class="btn">Install</button>
+                    <span class="close-btn" (click)="hideInstallPromotion();">Not now</span>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'ios'">
+            <div class="pwa-install-promotion-container ios" *ngIf="showIOSPromotion">
+                <span class="close-btn" (click)="hideIOSInstallPromotion();">X</span>
+                <p class="desc">Install this webapp on your desktop: tap
+                    <br><img
+                        src="https://user-images.githubusercontent.com/24765669/66438400-d71d6800-ea2c-11e9-9de3-f9096c793f1b.png"
+                        width="20" height="20" /> and then Add to homescreen
+                </p>
+                <div class="arrow-box">
+                    &nbsp;
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+</ng-container>

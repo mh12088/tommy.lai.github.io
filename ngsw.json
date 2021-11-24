@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1637662763651,
+  "timestamp": 1637743808790,
   "index": "https://mh12088.github.io/tommy.lai.github.io/index.html",
   "assetGroups": [
     {
@@ -11,8 +11,8 @@
         "https://mh12088.github.io/tommy.lai.github.io/analytics-helper.js",
         "https://mh12088.github.io/tommy.lai.github.io/favicon.ico",
         "https://mh12088.github.io/tommy.lai.github.io/index.html",
-        "https://mh12088.github.io/tommy.lai.github.io/main-es2015.e260b7a1f70560a68321.js",
-        "https://mh12088.github.io/tommy.lai.github.io/main-es5.e260b7a1f70560a68321.js",
+        "https://mh12088.github.io/tommy.lai.github.io/main-es2015.6409435a1fdfbecdad51.js",
+        "https://mh12088.github.io/tommy.lai.github.io/main-es5.6409435a1fdfbecdad51.js",
         "https://mh12088.github.io/tommy.lai.github.io/manifest.webmanifest",
         "https://mh12088.github.io/tommy.lai.github.io/ngsw-worker-modified.js",
         "https://mh12088.github.io/tommy.lai.github.io/polyfills-es2015.f332a089ad1600448873.js",
@@ -36,14 +36,15 @@
         "https://mh12088.github.io/tommy.lai.github.io/assets/icons/icon-384x384.png",
         "https://mh12088.github.io/tommy.lai.github.io/assets/icons/icon-512x512.png",
         "https://mh12088.github.io/tommy.lai.github.io/assets/icons/icon-72x72.png",
-        "https://mh12088.github.io/tommy.lai.github.io/assets/icons/icon-96x96.png"
+        "https://mh12088.github.io/tommy.lai.github.io/assets/icons/icon-96x96.png",
+        "https://mh12088.github.io/tommy.lai.github.io/assets/icons/icon.png"
       ],
       "patterns": []
     }
   ],
   "dataGroups": [],
   "hashTable": {
-    "https://mh12088.github.io/tommy.lai.github.io/analytics-helper.js": "4c7a9a865738c471cdd763d577e9f42057e02d5a",
+    "https://mh12088.github.io/tommy.lai.github.io/analytics-helper.js": "49a7dcda65a324b8d8dbf60e0c2caab8ab128d9b",
     "https://mh12088.github.io/tommy.lai.github.io/assets/data.json": "ab028e1ad76d3d19e025e386de5b339747bf68fc",
     "https://mh12088.github.io/tommy.lai.github.io/assets/icons/icon-128x128.png": "dae3b6ed49bdaf4327b92531d4b5b4a5d30c7532",
     "https://mh12088.github.io/tommy.lai.github.io/assets/icons/icon-144x144.png": "b0bd89982e08f9bd2b642928f5391915b74799a7",
@@ -53,12 +54,13 @@
     "https://mh12088.github.io/tommy.lai.github.io/assets/icons/icon-512x512.png": "559d9c4318b45a1f2b10596bbb4c960fe521dbcc",
     "https://mh12088.github.io/tommy.lai.github.io/assets/icons/icon-72x72.png": "c457e56089a36952cd67156f9996bc4ce54a5ed9",
     "https://mh12088.github.io/tommy.lai.github.io/assets/icons/icon-96x96.png": "3914125a4b445bf111c5627875fc190f560daa41",
+    "https://mh12088.github.io/tommy.lai.github.io/assets/icons/icon.png": "c3e88f3c47c14a91cd5f73169ab0fca2ce7d3618",
     "https://mh12088.github.io/tommy.lai.github.io/favicon.ico": "7d51d8287de9f4eaa2422115b7cb43dc30054c03",
-    "https://mh12088.github.io/tommy.lai.github.io/index.html": "440e78489f97b9c61fe2f0661c8677dfaa2b7bc9",
-    "https://mh12088.github.io/tommy.lai.github.io/main-es2015.e260b7a1f70560a68321.js": "82538414e1251e3a50a2e2ab6d7d966277211b56",
-    "https://mh12088.github.io/tommy.lai.github.io/main-es5.e260b7a1f70560a68321.js": "875961c204e08c9569dd08f5be27a8e635c1ac1d",
+    "https://mh12088.github.io/tommy.lai.github.io/index.html": "d9f51aaf5ed75ee47e41527926f0637d493a77f9",
+    "https://mh12088.github.io/tommy.lai.github.io/main-es2015.6409435a1fdfbecdad51.js": "a93ec450a382acf80da3501ad452d7b098f0a371",
+    "https://mh12088.github.io/tommy.lai.github.io/main-es5.6409435a1fdfbecdad51.js": "88d36511edecddb757e3c0ace031a47b78ac98ee",
     "https://mh12088.github.io/tommy.lai.github.io/manifest.webmanifest": "17106811e9c67d5396340ceab40152f0d8afed64",
-    "https://mh12088.github.io/tommy.lai.github.io/ngsw-worker-modified.js": "9a153ef8893ab009a276894302b095f4630603ef",
+    "https://mh12088.github.io/tommy.lai.github.io/ngsw-worker-modified.js": "60b7937d8b93ae8eb58cb5cd4f03ff5ae5114610",
     "https://mh12088.github.io/tommy.lai.github.io/polyfills-es2015.f332a089ad1600448873.js": "72ad4ccc0a3916ae4598199447cdeadd6d380570",
     "https://mh12088.github.io/tommy.lai.github.io/polyfills-es5.177e85a9724683782539.js": "cb1e2d25bf2b29b2dfe65e4431d47f930f3b3b1b",
     "https://mh12088.github.io/tommy.lai.github.io/runtime-es2015.0dae8cbc97194c7caed4.js": "a9aafcf49f49145093fc831efd9b8e2f6c71bb9c",

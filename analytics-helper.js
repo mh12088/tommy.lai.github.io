@@ -6,7 +6,7 @@ const apiSecret = `PLd3UejWQziRFCvzqyToiA`;
 const sendAnalyticsEvent = (eventName, eventValue) => {
 
   console.log('Sending analytics event');
-
+  console.log(eventValue.url)
   return fetch(`https://www.google-analytics.com/mp/collect?measurement_id=${measurementId}&api_secret=${apiSecret}`, {
     method: "POST",
     body: JSON.stringify({
@@ -14,7 +14,7 @@ const sendAnalyticsEvent = (eventName, eventValue) => {
       "events": [{
         "name": eventName,
         "params": {
-          "url": eventValue,
+          "url": eventValue.url,
         }
       }]
     })

@@ -1,4 +1,10 @@
-importScripts('./analytics-helper.js');
+let isImportedAnalyticsHelper = true;
+try {
+    importScripts('./analytics-helper.js');
+} catch (e) {
+    console.error("Import analytics helper failed:", e);
+    isImportedAnalyticsHelper = false;
+}
 (function () {
     'use strict';
 
@@ -1990,7 +1996,9 @@ ${msgIdle}`, { headers: this.adapter.newHeaders({ 'Content-Type': 'text/plain' }
                 return;
             }
             // For send analytics event to ga
-            sendAnalyticsEvent(event);
+            if (isImportedAnalyticsHelper) {
+                sendAnalyticsEvent(event);
+            }
             // Past this point, the SW commits to handling the request itself. This could still
             // fail (and result in `state` being set to `SAFE_MODE`), but even in that case the
             // SW will still deliver a response.

@@ -1934,9 +1934,9 @@ ${msgIdle}`, { headers: this.adapter.newHeaders({ 'Content-Type': 'text/plain' }
             });
 
             // Get ga config
-            if (isImportedAnalyticsHelper) {
-                getGaConfig(this.scope.location.origin, this.scope);
-            }
+            // if (isImportedAnalyticsHelper) {
+            //     getGaConfig(this.scope.location.origin, this.scope);
+            // }
 
             // Handle the fetch, message, and push events.
             this.scope.addEventListener('fetch', (event) => this.onFetch(event));

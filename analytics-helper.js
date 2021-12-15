@@ -5,7 +5,8 @@ let gaConfig = {
 let env;
 
 const sendAnalyticsEvent = (event, window) => {
-  if (event) {
+  const isSend = false;
+  if (event && isSend) {
     const request = event.request;
     console.log(request.url);
     // window.cookieStore.get("_ga").then(resp => {

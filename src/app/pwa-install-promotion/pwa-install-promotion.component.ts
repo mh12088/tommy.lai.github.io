@@ -24,7 +24,7 @@ export class PwaInstallPromotionComponent implements OnInit {
 
   event() {
     // event name, event category, event label, event value.
-    this._$gaService.logEvent('pwa_call_api', 'ddd', 'ffsao','http://yahoosad');
+    this._$gaService.logEvent('pwa_call_api', 'ddd', 'eee','fff');
   }
 
 

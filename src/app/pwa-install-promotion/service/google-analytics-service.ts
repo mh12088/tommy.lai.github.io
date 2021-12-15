@@ -12,8 +12,11 @@ export class GoogleAnalyticsService {
         this._router.events.pipe(
             filter(event => event instanceof NavigationEnd)
         ).subscribe((e: NavigationEnd) => {
-            gtag('js', new Date());
-            gtag('config', 'G-TFJ9H2W5Q3');
+            // gtag('js', new Date());
+            // gtag('config', 'G-TFJ9H2W5Q3');
+            // gtag('get', 'G-TFJ9H2W5Q3', 'client_id', (clientID) => {
+            //     console.log("test: ", clientID);
+            // });
         });
     }
 

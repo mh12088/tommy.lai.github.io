@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { identifierModuleUrl } from '@angular/compiler';
+import { Component, OnInit, ɵɵsetComponentScope } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { User } from './model/web-authn.model';
 import { MockService } from './service/mock-service';
@@ -65,6 +66,19 @@ export class WebAuthnComponent implements OnInit {
     this.webAuthnService.webAuthnSignup(user)
       .then((credential: any) => {
         console.log("Credentials Create response: ", credential);
+        // const rawId = this.mockService.decodeData(credential.rawId);
+        const clientDataObj = this.mockService.decodeClientDataJSON(credential);
+        const attestationObject = this.mockService.decodeAttestationObject(credential);
+        const decodedCredentials = {
+          id: credential.id,
+          // rawId,
+          response: {
+            clientDataObj,
+            attestationObject,
+          },
+          type: credential.type
+        };
+        alert(JSON.stringify(decodedCredentials));
         // Call server to validate and save credential
         // Hardcodeed on frontend
         const valid = this.mockService.registerCredential(user, credential);
@@ -95,7 +109,7 @@ export class WebAuthnComponent implements OnInit {
 
   deleteAccount(user: User): void {
     const isConfirm = confirm(`Are you sure you want to delete this user (${user.email})?`);
-    if(isConfirm) this.mockService.deleteUser(user);
+    if (isConfirm) this.mockService.deleteUser(user);
   }
 
   signin(user: User) {

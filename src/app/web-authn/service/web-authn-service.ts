@@ -33,7 +33,8 @@ export class WebAuthnService {
       timeout: 100000,
       attestation: 'direct'
     };
-
+    console.log("id:", this.mockService.decodeArrayBuffer(publicKeyCredentialCreationOptions.user.id));
+    console.log("Register Payload:", publicKeyCredentialCreationOptions);
     return navigator.credentials.create({
       publicKey: publicKeyCredentialCreationOptions,
     });

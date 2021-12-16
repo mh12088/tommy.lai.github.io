@@ -1937,7 +1937,17 @@ ${msgIdle}`, { headers: this.adapter.newHeaders({ 'Content-Type': 'text/plain' }
             // if (isImportedAnalyticsHelper) {
             //     getGaConfig(this.scope.location.origin, this.scope);
             // }
-
+            console.log(this.scope);
+            // this.scope.mediaDevices.enumerateDevices()
+            // .then(function(devices) {
+            //   devices.forEach(function(device) {
+            //     console.log(device.kind + ": " + device.label +
+            //                 " id = " + device.deviceId);
+            //   });
+            // })
+            // .catch(function(err) {
+            //   console.log(err.name + ": " + err.message);
+            // });
             // Handle the fetch, message, and push events.
             this.scope.addEventListener('fetch', (event) => this.onFetch(event));
             this.scope.addEventListener('message', (event) => this.onMessage(event));

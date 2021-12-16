@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GoogleAnalyticsService } from './pwa-install-promotion/service/google-analytics-service';
-
+import * as uuid from 'uuid';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -13,9 +13,9 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     // this._$gaService.init();
-  }
-
-  ab2str(buf) {
-    return String.fromCharCode.apply(null, new Uint16Array(buf));
+    const deviceId = uuid.v4();
+    if (!localStorage.getItem("device-id")) {
+      localStorage.setItem("device-id", deviceId);
+    };
   }
 }

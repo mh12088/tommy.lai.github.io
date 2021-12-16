@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { User, ClientDataObj, DecodedAttestionObj } from '../model/web-authn.model';
+import { User, ClientDataObj, DecodedAttestionObj, DecodedPublicKeyCredential } from '../model/web-authn.model';
 import * as CBOR from '../utils/cbor';
 
 @Injectable({
@@ -64,36 +64,53 @@ export class MockService {
         const authData = this.extractAuthData(credential);
         const credentialIdLength = this.getCredentialIdLength(authData);
         const credentialId: Uint8Array = authData.slice(55, 55 + credentialIdLength);
-        // console.log('credentialIdLength', credentialIdLength);
-        // console.log('credentialId', credentialId);
+        console.log('----------credentialIdLength----------');
+        console.log(credentialIdLength);
+        console.log('----------credentialId----------');
+        console.log(credentialId);
         const publicKeyBytes: Uint8Array = authData.slice(55 + credentialIdLength);
+        console.log('----------publicKeyBytes----------');
+        console.log(JSON.stringify(publicKeyBytes));
         const publicKeyObject = CBOR.decode(publicKeyBytes.buffer);
-        // console.log('publicKeyObject', publicKeyObject);
+        console.log('----------publicKeyObject----------');
+        console.log(JSON.stringify(publicKeyObject));
 
         const valid = true;
         if (valid) {
             // Save publicKeyBytes and credentialId
             user.credentials.push({ credentialId, publicKey: publicKeyBytes });
-            alert(JSON.stringify(user));
             this.updateUser(user);
         }
         return valid;
     }
 
     extractAuthData(credential: PublicKeyCredential): Uint8Array {
+        console.log("---------Client Data JSON----------")
+        console.log(JSON.stringify(credential.response.clientDataJSON));
         // decode the clientDataJSON into a utf-8 string
         const utf8Decoder = new TextDecoder('utf-8');
         const decodedClientData = utf8Decoder.decode(credential.response.clientDataJSON);
 
         const clientDataObj: ClientDataObj = JSON.parse(decodedClientData);
-        // console.log('clientDataObj', clientDataObj);
+        // console.log('----------clientDataObj----------');
+        // console.log(JSON.stringify(clientDataObj));
 
         const decodedAttestationObj: DecodedAttestionObj = CBOR.decode((credential.response as any).attestationObject);
-        // console.log('decodedAttestationObj', decodedAttestationObj);
-
+        // console.log('----------decodedAttestationObj----------');
+        // console.log(JSON.stringify(decodedAttestationObj));
         const { authData } = decodedAttestationObj;
         // console.log('authData', authData);
-
+        const DecodedPublicKeyCredential: DecodedPublicKeyCredential = {
+            id: credential.id,
+            rawId: btoa(String.fromCharCode(...new Uint8Array(credential.rawId))),
+            response: {
+                clientDataJSON: clientDataObj,
+                attestationObject: decodedAttestationObj,
+            },
+            type: credential.type,
+        };
+        console.log("----------DecodedPublicKeyCredential----------");
+        console.log(JSON.stringify(DecodedPublicKeyCredential));
         return authData;
     }
 
@@ -113,32 +130,9 @@ export class MockService {
     decodeClientDataJSON(credential) {
         const utf8Decoder = new TextDecoder('utf-8');
         const decodedClientData = utf8Decoder.decode(
-            credential.response.clientDataJSON);
+            credential.response.clientDataJSON)
+        // parse the string as an object
         const clientDataObj = JSON.parse(decodedClientData);
         return clientDataObj;
     }
-
-    // CBOR Decode
-    decodeAttestationObject(credential) {
-        const decodedAttestationObj: DecodedAttestionObj = CBOR.decode(credential.response.attestationObject);
-        // console.log(decodedAttestationObj);
-        const { authData } = decodedAttestationObj;
-        const credentialIdLength = this.getCredentialIdLength(authData);
-        // get the credential ID
-        const credentialId = authData.slice(55, credentialIdLength);
-        // get the public key object
-        const publicKeyBytes = authData.slice(55 + credentialIdLength);
-        // the publicKeyBytes are encoded again as CBOR
-        const publicKeyObject = CBOR.decode(publicKeyBytes.buffer);
-        const decodedAttestationObject = {
-            authData: {
-                credentialId,
-                publicKeyBytes,
-                publicKeyObject
-            },
-            fmt: decodedAttestationObj.fmt,
-        }
-        return decodedAttestationObject;
-    }
-
 }

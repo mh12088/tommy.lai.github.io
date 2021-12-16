@@ -23,3 +23,15 @@ export interface User {
     mobileNumber?: string;
     credentials?: Credential[];
 }
+
+export interface DecodedPublicKeyCredential {
+    id: string;
+    rawId: string;
+    response: AuthenticatorAttestationResponse;
+    type: string;
+}
+
+export interface AuthenticatorAttestationResponse {
+    clientDataJSON: ClientDataObj;
+    attestationObject: DecodedAttestionObj;
+}

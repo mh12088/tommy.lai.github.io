@@ -10,7 +10,6 @@ export class WebAuthnService {
   constructor(private mockService: MockService) { }
 
   webAuthnSignup(user: User): Promise<Credential> {
-    console.log('Sign up');
     const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
       // Should generate from server
       challenge: this.mockService.getChallenge(),
@@ -33,8 +32,8 @@ export class WebAuthnService {
       timeout: 100000,
       attestation: 'direct'
     };
-    console.log("id:", this.mockService.decodeArrayBuffer(publicKeyCredentialCreationOptions.user.id));
-    console.log("Register Payload:", publicKeyCredentialCreationOptions);
+    console.log("----------Sign up Payload----------");
+    console.log(publicKeyCredentialCreationOptions);
     return navigator.credentials.create({
       publicKey: publicKeyCredentialCreationOptions,
     });
@@ -46,7 +45,8 @@ export class WebAuthnService {
       return { transports: ['internal'], type: 'public-key', id: Uint8Array.from(Object.values(c.credentialId)) };
     });
 
-    console.log('allowCredentials', allowCredentials);
+    console.log("----------Sign in Payload----------")
+    console.log(JSON.stringify(allowCredentials));
 
     const credentialRequestOptions: PublicKeyCredentialRequestOptions = {
       challenge: this.mockService.getChallenge(),

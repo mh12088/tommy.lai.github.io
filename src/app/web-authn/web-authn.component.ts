@@ -65,20 +65,8 @@ export class WebAuthnComponent implements OnInit {
     // Ask for WebAuthn Auth method
     this.webAuthnService.webAuthnSignup(user)
       .then((credential: any) => {
-        console.log("Credentials Create response: ", credential);
-        // const rawId = this.mockService.decodeData(credential.rawId);
-        const clientDataObj = this.mockService.decodeClientDataJSON(credential);
-        const attestationObject = this.mockService.decodeAttestationObject(credential);
-        const decodedCredentials = {
-          id: credential.id,
-          // rawId,
-          response: {
-            clientDataObj,
-            attestationObject,
-          },
-          type: credential.type
-        };
-        alert(JSON.stringify(decodedCredentials));
+        console.log("---------Credentials Create response---------");
+        console.log(JSON.stringify(credential));
         // Call server to validate and save credential
         // Hardcodeed on frontend
         const valid = this.mockService.registerCredential(user, credential);
@@ -117,7 +105,8 @@ export class WebAuthnComponent implements OnInit {
     this.webAuthnService.webAuthnSignin(userFromDB)
       .then((assertion) => {
         alert("Authentication Successful");
-        console.log("Authentication Successful: ", assertion);
+        console.log("----------Assertion response----------");
+        console.log(JSON.stringify(assertion));
         // TODO: Call server to validate assertion
         // When server return ok,login successful else login failed
 

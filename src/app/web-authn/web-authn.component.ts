@@ -12,15 +12,13 @@ import { WebAuthnService } from './service/web-authn-service';
 })
 export class WebAuthnComponent implements OnInit {
   errorMsg: string = "";
-  // mobileNumber: string = "";
-  // email: string = "";
-  // isEnableBiometricLogin: boolean;
   userList: User[] = [];
   userForm = new FormGroup({
     email: new FormControl("", [Validators.required, Validators.email]),
     mobileNumber: new FormControl("", [Validators.required, Validators.pattern("^[0-9]{8}$")]),
     isEnableBiometricLogin: new FormControl(),
   });
+
   constructor(
     private mockService: MockService,
     private webAuthnService: WebAuthnService
@@ -68,7 +66,7 @@ export class WebAuthnComponent implements OnInit {
         console.log("---------Credentials Create response---------");
         console.log(JSON.stringify(credential));
         // Call server to validate and save credential
-        // Hardcodeed on frontend
+        // Hardcoded on frontend
         const valid = this.mockService.registerCredential(user, credential);
         if (valid) {
           alert("Registration Successful");
@@ -102,11 +100,14 @@ export class WebAuthnComponent implements OnInit {
 
   signin(user: User) {
     const userFromDB = this.mockService.getUserByMobileNumber(user.mobileNumber);
+    console.log("----------Saved User:----------");
+    console.log(JSON.stringify(userFromDB));
     this.webAuthnService.webAuthnSignin(userFromDB)
       .then((assertion) => {
         alert("Authentication Successful");
         console.log("----------Assertion response----------");
         console.log(JSON.stringify(assertion));
+        this.mockService.decodeAssertion(assertion);
         // TODO: Call server to validate assertion
         // When server return ok,login successful else login failed
 

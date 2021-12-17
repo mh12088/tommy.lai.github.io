@@ -8,11 +8,14 @@ import { User } from '../model/web-authn.model';
 export class WebAuthnService {
 
   constructor(private mockService: MockService) { }
-
   webAuthnSignup(user: User): Promise<Credential> {
+    const challenge: string = this.mockService.genUUID();
+    console.log("Sign up challenge");
+    console.log(challenge)
     const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
       // Should generate from server
-      challenge: this.mockService.getChallenge(),
+      // challenge: this.mockService.getChallenge(),
+      challenge: Uint8Array.from(challenge, c => c.charCodeAt(0)),
       // Relying Party
       rp: {
         name: "demo",
@@ -33,7 +36,7 @@ export class WebAuthnService {
       attestation: 'direct'
     };
     console.log("----------Sign up Payload----------");
-    console.log(publicKeyCredentialCreationOptions);
+    console.log(JSON.stringify(publicKeyCredentialCreationOptions));
     return navigator.credentials.create({
       publicKey: publicKeyCredentialCreationOptions,
     });
@@ -45,13 +48,13 @@ export class WebAuthnService {
       return { transports: ['internal'], type: 'public-key', id: Uint8Array.from(Object.values(c.credentialId)) };
     });
 
-    console.log("----------Sign in Payload----------")
-    console.log(JSON.stringify(allowCredentials));
 
     const credentialRequestOptions: PublicKeyCredentialRequestOptions = {
       challenge: this.mockService.getChallenge(),
       allowCredentials,
     };
+    console.log("----------Sign in Payload----------")
+    console.log(JSON.stringify(credentialRequestOptions));
 
     return navigator.credentials.get({
       publicKey: credentialRequestOptions,

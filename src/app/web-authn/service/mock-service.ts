@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { User, ClientDataObj, DecodedAttestionObj, DecodedPublicKeyCredential } from '../model/web-authn.model';
 import * as CBOR from '../utils/cbor';
-
+import * as uuid from 'uuid';
 @Injectable({
     providedIn: 'root'
 })
@@ -9,6 +9,10 @@ export class MockService {
     userList: User[] = [];
 
     constructor() { }
+
+    genUUID() {
+        return uuid.v4();
+    }
 
     // Should generate from server
     getChallenge() {
@@ -122,17 +126,18 @@ export class MockService {
         return dataView.getUint16(0);
     }
 
+    arrayBufferToStr(buf) {
+        return String.fromCharCode.apply(null, new Uint8Array(buf));
+    }
+
     decodeArrayBuffer(arrayBuffer) {
         return String.fromCharCode.apply(null, arrayBuffer);
     }
 
-    // UTF-8 Decode
-    decodeClientDataJSON(credential) {
-        const utf8Decoder = new TextDecoder('utf-8');
-        const decodedClientData = utf8Decoder.decode(
-            credential.response.clientDataJSON)
-        // parse the string as an object
-        const clientDataObj = JSON.parse(decodedClientData);
-        return clientDataObj;
+    decodeAssertion(assertion) {
+        let clientDataStr = this.arrayBufferToStr(assertion.response.clientDataJSON);
+        let clientDataObj: ClientDataObj = JSON.parse(clientDataStr);
+        console.log("----------Sign in clientDataObj----------")
+        console.log(JSON.stringify(clientDataObj));
     }
 }

@@ -32,6 +32,9 @@ export interface DecodedPublicKeyCredential {
 }
 
 export interface AuthenticatorAttestationResponse {
-    clientDataJSON: ClientDataObj;
-    attestationObject: DecodedAttestionObj;
+    clientDataJSON?: ClientDataObj;
+    attestationObject?: DecodedAttestionObj;
+    signature?: string;
+    userHandle?: string;
+    authenticatorData?: any;
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { User, ClientDataObj, DecodedAttestionObj, DecodedPublicKeyCredential } from '../model/web-authn.model';
 import * as CBOR from '../utils/cbor';
 import * as uuid from 'uuid';
+import { ɵINTERNAL_BROWSER_DYNAMIC_PLATFORM_PROVIDERS } from '@angular/platform-browser-dynamic';
 @Injectable({
     providedIn: 'root'
 })
@@ -127,11 +128,8 @@ export class MockService {
     }
 
     arrayBufferToStr(buf) {
-        return String.fromCharCode.apply(null, new Uint8Array(buf));
-    }
-
-    decodeArrayBuffer(arrayBuffer) {
-        return String.fromCharCode.apply(null, arrayBuffer);
+        let decoder = new TextDecoder("utf-8");
+        return decoder.decode(buf);
     }
 
     decodeAssertion(assertion) {
@@ -139,5 +137,8 @@ export class MockService {
         let clientDataObj: ClientDataObj = JSON.parse(clientDataStr);
         console.log("----------Sign in clientDataObj----------")
         console.log(JSON.stringify(clientDataObj));
+        const userHandle = this.arrayBufferToStr(assertion.response.userHandle);
+        console.log("----------User Handle----------")
+        console.log(userHandle);
     }
 }

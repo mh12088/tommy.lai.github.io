@@ -10,11 +10,10 @@ export class WebAuthnService {
   constructor(private mockService: MockService) { }
   webAuthnSignup(user: User): Promise<Credential> {
     const challenge: string = this.mockService.genUUID();
-    console.log("Sign up challenge");
-    console.log(challenge)
+    console.log("----------Sign up challenge----------");
+    console.log(challenge);
     const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
       // Should generate from server
-      // challenge: this.mockService.getChallenge(),
       challenge: Uint8Array.from(challenge, c => c.charCodeAt(0)),
       // Relying Party
       rp: {
@@ -45,12 +44,14 @@ export class WebAuthnService {
   webAuthnSignin(user: User): Promise<Credential> {
     const allowCredentials: PublicKeyCredentialDescriptor[] = user.credentials.map(c => {
       console.log(c.credentialId);
-      return { transports: ['internal'], type: 'public-key', id: Uint8Array.from(Object.values(c.credentialId)) };
+      return { transports: ['internal'], type: 'public-key', id: Uint8Array.from(c.credentialId) };
     });
 
-
+    console.log("----------Sign in challenge----------");
+    const challenge: string = this.mockService.genUUID();
+    console.log(challenge);
     const credentialRequestOptions: PublicKeyCredentialRequestOptions = {
-      challenge: this.mockService.getChallenge(),
+      challenge: Uint8Array.from(challenge, c => c.charCodeAt(0)),
       allowCredentials,
     };
     console.log("----------Sign in Payload----------")

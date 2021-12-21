@@ -67,6 +67,11 @@ export class WebAuthnComponent implements OnInit {
         console.log(JSON.stringify(credential));
         // Call server to validate and save credential
         // Hardcoded on frontend
+        console.log("---------Decoded Public key Resonse(base64string)----------");
+        console.log(JSON.stringify(this.mockService.decodePublicKeyCredentialToBase64String(credential)));
+        console.log("---------Decoded Public key Resonse----------");
+        console.log(JSON.stringify(this.mockService.decodePublicKeyCredential(credential)));
+        console.log("---------Decoded end----------");
         const valid = this.mockService.registerCredential(user, credential);
         if (valid) {
           alert("Registration Successful");

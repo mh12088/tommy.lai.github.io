@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { User, ClientDataObj, DecodedAttestionObj, DecodedPublicKeyCredential } from '../model/web-authn.model';
 import * as CBOR from '../utils/cbor';
 import * as uuid from 'uuid';
-import { ɵINTERNAL_BROWSER_DYNAMIC_PLATFORM_PROVIDERS } from '@angular/platform-browser-dynamic';
 @Injectable({
     providedIn: 'root'
 })
@@ -64,6 +63,74 @@ export class MockService {
         return this.userList[userIndex];
     }
 
+
+    base64urlEncode(arraybuffer) {
+        let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+        // Use a lookup table to find the index.
+        let lookup = new Uint8Array(256);
+        for (let i = 0; i < chars.length; i++) {
+            lookup[chars.charCodeAt(i)] = i;
+        }
+        let bytes = new Uint8Array(arraybuffer),
+            i, len = bytes.length, base64 = "";
+
+        for (i = 0; i < len; i += 3) {
+            base64 += chars[bytes[i] >> 2];
+            base64 += chars[((bytes[i] & 3) << 4) | (bytes[i + 1] >> 4)];
+            base64 += chars[((bytes[i + 1] & 15) << 2) | (bytes[i + 2] >> 6)];
+            base64 += chars[bytes[i + 2] & 63];
+        }
+
+        if ((len % 3) === 2) {
+            base64 = base64.substring(0, base64.length - 1);
+        } else if (len % 3 === 1) {
+            base64 = base64.substring(0, base64.length - 2);
+        }
+
+        return base64;
+    }
+
+    decodePublicKeyCredentialToBase64String(pubKeyCred) {
+        if (pubKeyCred instanceof ArrayBuffer) {
+            return this.base64urlEncode(pubKeyCred);
+        } else if (pubKeyCred instanceof Array) {
+            return pubKeyCred.map(this.decodePublicKeyCredentialToBase64String);
+        } else if (pubKeyCred instanceof Object) {
+            const obj = {};
+            for (let key in pubKeyCred) {
+                obj[key] = this.decodePublicKeyCredentialToBase64String(pubKeyCred[key]);
+            }
+            return obj;
+        } else return pubKeyCred;
+    }
+
+    decodePublicKeyCredential(credential: PublicKeyCredential) {
+        const obj = {};
+        for (let key in credential) {
+            switch (key) {
+                case "id":
+                case "type":
+                    obj[key] = credential[key];
+                    break;
+                case "rawId":
+                    obj[key] = this.arrayBufferToBase64(credential[key])
+                    break;
+                case "response":
+                    const utf8Decoder = new TextDecoder('utf-8');
+                    const decodedClientData = utf8Decoder.decode(credential.response.clientDataJSON);
+                    const clientDataObj: ClientDataObj = JSON.parse(decodedClientData);
+                    const decodedAttestationObj: DecodedAttestionObj = CBOR.decode((credential.response as any).attestationObject);
+                    obj[key] = {};
+                    obj[key]["clientDataJSON"] = clientDataObj;
+                    obj[key]["attestationObject"] = decodedAttestationObj;
+                    break;
+                default:
+                    break;
+            }
+        }
+        return obj;
+    }
+
     // Validate and Store credential
     registerCredential(user: User, credential: PublicKeyCredential): boolean {
         const authData = this.extractAuthData(credential);
@@ -116,6 +183,8 @@ export class MockService {
         };
         console.log("----------DecodedPublicKeyCredential----------");
         console.log(JSON.stringify(DecodedPublicKeyCredential));
+        console.log("----------Auth Data----------");
+        console.log(JSON.stringify(authData));
         return authData;
     }
 
@@ -140,5 +209,27 @@ export class MockService {
         const userHandle = this.arrayBufferToStr(assertion.response.userHandle);
         console.log("----------User Handle----------")
         console.log(userHandle);
+    }
+
+
+
+
+    arrayBufferToBase64(buffer) {
+        var binary = '';
+        var bytes = new Uint8Array(buffer);
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
+    base64ToArrayBuffer(base64) {
+        let binary_string = window.atob(base64);
+        let len = binary_string.length;
+        let bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binary_string.charCodeAt(i);
+        }
+        return bytes.buffer;
     }
 }

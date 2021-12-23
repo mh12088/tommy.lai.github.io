@@ -9,6 +9,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { PwaInstallPromotionComponent } from './pwa-install-promotion/pwa-install-promotion.component';
 import { HttpClientModule} from '@angular/common/http';
+import { TestService } from './web-authn/service/test-service';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,7 @@ import { HttpClientModule} from '@angular/common/http';
     ServiceWorkerModule.register('ngsw-worker-modified.js', { enabled: environment.production }),    
     HttpClientModule
   ],
-  providers: [],
+  providers: [TestService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

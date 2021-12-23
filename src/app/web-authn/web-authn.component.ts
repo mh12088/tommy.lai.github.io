@@ -3,6 +3,7 @@ import { Component, OnInit, ɵɵsetComponentScope } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { User } from './model/web-authn.model';
 import { MockService } from './service/mock-service';
+import { TestService } from './service/test-service';
 import { WebAuthnService } from './service/web-authn-service';
 
 @Component({
@@ -21,7 +22,8 @@ export class WebAuthnComponent implements OnInit {
 
   constructor(
     private mockService: MockService,
-    private webAuthnService: WebAuthnService
+    private webAuthnService: WebAuthnService,
+    private testService: TestService,
   ) { }
 
   ngOnInit(): void {
@@ -124,4 +126,14 @@ export class WebAuthnComponent implements OnInit {
       });
   }
 
+
+  savePublicKey() {
+    this.testService.savePublicKey().subscribe(
+      response => {
+        console.log(response)
+      },
+      error => {
+        console.log(error);
+      });
+  }
 }

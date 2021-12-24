@@ -120,8 +120,7 @@ export class MockService {
 
     decodePublicKeyCredentialToBase64String(pubKeyCred) {
         if (pubKeyCred instanceof ArrayBuffer) {
-            // return this.base64urlEncode(pubKeyCred);
-            return pubKeyCred;
+            return this.base64urlEncode(pubKeyCred);
         } else if (pubKeyCred instanceof Array) {
             return pubKeyCred.map(this.decodePublicKeyCredentialToBase64String);
         } else if (pubKeyCred instanceof Object) {

@@ -263,7 +263,7 @@ export class MockService {
     }
 
     bufferEncode(value) {
-        return base64js.fromByteArray(value)
+        return btoa(String.fromCharCode.apply(null, new Uint8Array(value)))
             .replace(/\+/g, "-")
             .replace(/\//g, "_")
             .replace(/=/g, "");

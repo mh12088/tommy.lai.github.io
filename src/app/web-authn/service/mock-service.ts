@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { User, ClientDataObj, DecodedAttestionObj, DecodedPublicKeyCredential } from '../model/web-authn.model';
 import * as CBOR from '../utils/cbor';
+import * as base64js from '../utils/base64';
 import * as uuid from 'uuid';
 @Injectable({
     providedIn: 'root'
@@ -259,5 +260,37 @@ export class MockService {
             bytes[i] = binary_string.charCodeAt(i);
         }
         return bytes.buffer;
+    }
+
+    bufferEncode(value) {
+        return base64js.fromByteArray(value)
+            .replace(/\+/g, "-")
+            .replace(/\//g, "_")
+            .replace(/=/g, "");
+    }
+
+
+
+    encodePublicKeyCredential(credential: PublicKeyCredential) {
+        const obj = {};
+        for (let key in credential) {
+            switch (key) {
+                case "id":
+                case "type":
+                    obj[key] = credential[key];
+                    break;
+                case "rawId":
+                    obj[key] = this.arrayBufferToBase64(credential[key])
+                    break;
+                case "response":
+                    obj[key] = {};
+                    obj[key]["clientDataJSON"] =  this.bufferEncode(credential.response.clientDataJSON);
+                    obj[key]["attestationObject"] = this.bufferEncode((credential.response as any).attestationObject);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return obj;
     }
 }

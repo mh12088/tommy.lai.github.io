@@ -69,13 +69,8 @@ export class WebAuthnComponent implements OnInit {
         console.log(JSON.stringify(credential));
         // Call server to validate and save credential
         // Hardcoded on frontend
-        const typedArray = new Uint8Array(credential.response.attestationObject);
-        const array = [...typedArray];
-        console.log("xxxxxxxxxxxxxxx")
-        console.log(JSON.stringify(array));
-
-        console.log("---------Decoded Public key Resonse(base64string)----------");
-        console.log(JSON.stringify(this.mockService.decodePublicKeyCredentialToBase64String(credential)));
+        console.log("---------Public key Resonse(base64)----------");
+        console.log(JSON.stringify(this.mockService.encodePublicKeyCredential(credential)));
         console.log("---------Decoded Public key Resonse----------");
         console.log(JSON.stringify(this.mockService.decodePublicKeyCredential(credential)));
         console.log("---------Decoded end----------");

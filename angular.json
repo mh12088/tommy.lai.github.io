@@ -28,8 +28,8 @@
               "src/assets",
               "src/manifest.webmanifest",
               "src/analytics-helper.js",
-              "src/ngsw-worker-modified.js",
-              "src/icon.png"
+              "src/ngsw-worker-modified.js"
+              // "src/icon.png"
             ],
             "styles": [
               "src/styles.scss"

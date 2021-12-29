@@ -272,25 +272,18 @@ export class MockService {
 
 
     encodePublicKeyCredential(credential: PublicKeyCredential) {
-        const obj = {};
-        for (let key in credential) {
-            switch (key) {
-                case "id":
-                case "type":
-                    obj[key] = credential[key];
-                    break;
-                case "rawId":
-                    obj[key] = this.arrayBufferToBase64(credential[key])
-                    break;
-                case "response":
-                    obj[key] = {};
-                    obj[key]["clientDataJSON"] =  this.bufferEncode(credential.response.clientDataJSON);
-                    obj[key]["attestationObject"] = this.bufferEncode((credential.response as any).attestationObject);
-                    break;
-                default:
-                    break;
-            }
-        }
+        let attestationObject = (credential.response as any).attestationObject;
+        let clientDataJSON = credential.response.clientDataJSON;
+        let rawId = credential.rawId;
+        const obj = {
+            id: credential.id,
+            rawId: this.bufferEncode(rawId),
+            type: credential.type,
+            response: {
+                attestationObject: this.bufferEncode(attestationObject),
+                clientDataJSON: this.bufferEncode(clientDataJSON),
+            },
+        };
         return obj;
     }
 }

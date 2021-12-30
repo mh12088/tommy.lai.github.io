@@ -1,11 +1,12 @@
 let gaConfig = {
   measurementId: '',
-  apiSecret: ''
+  apiSecret: '',
 };
+let clientId;
 let env;
 
 const sendAnalyticsEvent = (event, window) => {
-  const isSend = false;
+  const isSend = true;
   if (event && isSend) {
     const request = event.request;
     console.log(request.url);
@@ -33,7 +34,8 @@ const send = (eventName, eventValue, window) => {
   return fetch(`https://www.google-analytics.com/mp/collect?measurement_id=${decodedGaConfig.measurementId}&api_secret=${decodedGaConfig.apiSecret}`, {
     method: "POST",
     body: JSON.stringify({
-      "client_id": "client_id",
+      "client_id": clientId,
+      "user_id": clientId,
       "events": [{
         "name": eventName,
         "params": {
@@ -70,6 +72,7 @@ const getGaConfig = (origin) => {
   if (env) {
     gaConfig.measurementId = config[env].measurementId;
     gaConfig.apiSecret = config[env].apiSecret;
+    clientId = generateUUIDV4();
   } else {
     console.log("env is not found");
   }
@@ -80,4 +83,10 @@ const getDecodedGaConfig = (window) => {
     measurementId: window.atob(gaConfig.measurementId),
     apiSecret: window.atob(gaConfig.apiSecret)
   };
+}
+
+const generateUUIDV4 = () => {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
 }

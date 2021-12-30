@@ -14,8 +14,8 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     // this._$gaService.init();
     const deviceId = uuid.v4();
-    if (!localStorage.getItem("device-id")) {
-      localStorage.setItem("device-id", deviceId);
+    if (!localStorage.getItem("device_id")) {
+      localStorage.setItem("device_id", deviceId);
     };
   }
 }

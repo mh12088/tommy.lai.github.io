@@ -27,6 +27,7 @@ export class WebAuthnComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.userList = this.mockService.getAllUser();
   }
 
   get email(): any {
@@ -69,11 +70,10 @@ export class WebAuthnComponent implements OnInit {
         console.log(JSON.stringify(credential));
         // Call server to validate and save credential
         // Hardcoded on frontend
-        console.log("---------Public key Resonse(base64)----------");
+        console.log("---------Public key Resonse(URLBase64)----------");
         console.log(JSON.stringify(this.mockService.encodePublicKeyCredential(credential)));
-        console.log("---------Decoded Public key Resonse----------");
+        console.log("---------Public key Resonse(decoded)----------");
         console.log(JSON.stringify(this.mockService.decodePublicKeyCredential(credential)));
-        console.log("---------Decoded end----------");
         const valid = this.mockService.registerCredential(user, credential);
         if (valid) {
           alert("Registration Successful");
@@ -105,8 +105,16 @@ export class WebAuthnComponent implements OnInit {
     if (isConfirm) this.mockService.deleteUser(user);
   }
 
-  signin(user: User) {
-    const userFromDB = this.mockService.getUserByMobileNumber(user.mobileNumber);
+  signin(user?: User) {
+    let userFromDB: any = {credentials: []};
+    if (user) {
+      userFromDB = this.mockService.getUserByMobileNumber(user.mobileNumber);
+    } else {
+      if (localStorage.getItem("public-key")) {
+        const publicKeyObj = JSON.parse(localStorage.getItem("public-key"));
+        userFromDB['credentials'] = [publicKeyObj];
+      };
+    }
     console.log("----------Saved User:----------");
     console.log(JSON.stringify(userFromDB));
     this.webAuthnService.webAuthnSignin(userFromDB)

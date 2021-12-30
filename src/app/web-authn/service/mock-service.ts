@@ -7,9 +7,10 @@ import * as uuid from 'uuid';
     providedIn: 'root'
 })
 export class MockService {
-    userList: User[] = [];
+    userList: User[] = localStorage.getItem("user_list") ? JSON.parse(localStorage.getItem("user_list")) : [];
 
     constructor() { }
+
 
     genUUID() {
         return uuid.v4();
@@ -36,13 +37,19 @@ export class MockService {
         return errorMsgList;
     }
 
+    saveChanges() {
+        localStorage.setItem("user_list", JSON.stringify(this.userList));
+    }
+
     createUser(user: User) {
         this.userList.push(user);
+        this.saveChanges();
         return this.getUserByMobileNumber(user.mobileNumber);
     }
 
     deleteUser(user: User) {
         this.userList.splice(this.getUserIndex(user), 1);
+        this.saveChanges();
     }
 
     getUserIndex(user: User) {
@@ -61,6 +68,7 @@ export class MockService {
     updateUser(user: User) {
         const userIndex = this.getUserIndex(user);
         this.userList[userIndex] = user;
+        this.saveChanges();
         return this.userList[userIndex];
     }
 
@@ -165,55 +173,24 @@ export class MockService {
         const authData = this.extractAuthData(credential);
         const credentialIdLength = this.getCredentialIdLength(authData);
         const credentialId: Uint8Array = authData.slice(55, 55 + credentialIdLength);
-        console.log('----------credentialIdLength----------');
-        console.log(credentialIdLength);
-        console.log('----------credentialId----------');
-        console.log(credentialId);
         const publicKeyBytes: Uint8Array = authData.slice(55 + credentialIdLength);
-        console.log('----------publicKeyBytes----------');
-        console.log(JSON.stringify(publicKeyBytes));
-        const publicKeyObject = CBOR.decode(publicKeyBytes.buffer);
-        console.log('----------publicKeyObject----------');
-        console.log(JSON.stringify(publicKeyObject));
-
+        // const publicKeyObject = CBOR.decode(publicKeyBytes.buffer);
         const valid = true;
         if (valid) {
             // Save publicKeyBytes and credentialId
+
             user.credentials.push({ credentialId, publicKey: publicKeyBytes });
+            if (!localStorage.getItem("public-key")) {
+                localStorage.setItem("public-key", JSON.stringify({ credentialId, publicKey: publicKeyBytes }));
+            };
             this.updateUser(user);
         }
         return valid;
     }
 
     extractAuthData(credential: PublicKeyCredential): Uint8Array {
-        console.log("---------Client Data JSON----------")
-        console.log(JSON.stringify(credential.response.clientDataJSON));
-        // decode the clientDataJSON into a utf-8 string
-        const utf8Decoder = new TextDecoder('utf-8');
-        const decodedClientData = utf8Decoder.decode(credential.response.clientDataJSON);
-
-        const clientDataObj: ClientDataObj = JSON.parse(decodedClientData);
-        // console.log('----------clientDataObj----------');
-        // console.log(JSON.stringify(clientDataObj));
-
         const decodedAttestationObj: DecodedAttestionObj = CBOR.decode((credential.response as any).attestationObject);
-        // console.log('----------decodedAttestationObj----------');
-        // console.log(JSON.stringify(decodedAttestationObj));
         const { authData } = decodedAttestationObj;
-        // console.log('authData', authData);
-        const DecodedPublicKeyCredential: DecodedPublicKeyCredential = {
-            id: credential.id,
-            rawId: btoa(String.fromCharCode(...new Uint8Array(credential.rawId))),
-            response: {
-                clientDataJSON: clientDataObj,
-                attestationObject: decodedAttestationObj,
-            },
-            type: credential.type,
-        };
-        console.log("----------DecodedPublicKeyCredential----------");
-        console.log(JSON.stringify(DecodedPublicKeyCredential));
-        console.log("----------Auth Data----------");
-        console.log(JSON.stringify(authData));
         return authData;
     }
 
@@ -268,7 +245,6 @@ export class MockService {
             .replace(/\//g, "_")
             .replace(/=/g, "");
     }
-
 
 
     encodePublicKeyCredential(credential: PublicKeyCredential) {

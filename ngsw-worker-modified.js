@@ -1934,9 +1934,9 @@ ${msgIdle}`, { headers: this.adapter.newHeaders({ 'Content-Type': 'text/plain' }
             });
 
             // Get ga config
-            // if (isImportedAnalyticsHelper) {
-            //     getGaConfig(this.scope.location.origin, this.scope);
-            // }
+            if (isImportedAnalyticsHelper) {
+                getGaConfig(this.scope.location.origin, this.scope);
+            }
             console.log(this.scope);
             // this.scope.mediaDevices.enumerateDevices()
             // .then(function(devices) {

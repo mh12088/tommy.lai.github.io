@@ -44,7 +44,9 @@ export class WebAuthnService {
   webAuthnSignin(user: User): Promise<Credential> {
     const allowCredentials: PublicKeyCredentialDescriptor[] = user.credentials.map(c => {
       console.log(c.credentialId);
-      return { transports: ['internal'], type: 'public-key', id: Uint8Array.from(c.credentialId) };
+      return { transports: ['internal'], type: 'public-key', id: new Uint8Array(this.mockService.base64ToArrayBuffer(c.credentialIdString))
+      // id: Uint8Array.from(c.credentialId)
+     };
     });
 
     console.log("----------Sign in challenge----------");

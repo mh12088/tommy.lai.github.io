@@ -11,6 +11,9 @@ export class MockService {
 
     constructor() { }
 
+    getUserByDeviceId(deviceId: string) {
+        return this.userList.find(user => user.deviceId === deviceId);
+    }
 
     genUUID() {
         return uuid.v4();
@@ -178,11 +181,7 @@ export class MockService {
         const valid = true;
         if (valid) {
             // Save publicKeyBytes and credentialId
-
-            user.credentials.push({ credentialId, publicKey: publicKeyBytes });
-            if (!localStorage.getItem("public-key")) {
-                localStorage.setItem("public-key", JSON.stringify({ credentialId, publicKey: publicKeyBytes }));
-            };
+            user.credentials.push({ credentialIdString: this.arrayBufferToBase64(credentialId), publicKeyString: this.arrayBufferToBase64(publicKeyBytes)});
             this.updateUser(user);
         }
         return valid;
@@ -246,6 +245,9 @@ export class MockService {
             .replace(/=/g, "");
     }
 
+    bufferDecode(value) {
+        return Uint8Array.from(atob(value), c => c.charCodeAt(0));
+    }
 
     encodePublicKeyCredential(credential: PublicKeyCredential) {
         let attestationObject = (credential.response as any).attestationObject;
@@ -253,13 +255,23 @@ export class MockService {
         let rawId = credential.rawId;
         const obj = {
             id: credential.id,
-            rawId: this.bufferEncode(rawId),
+            rawId: this.arrayBufferToBase64(rawId),
             type: credential.type,
             response: {
-                attestationObject: this.bufferEncode(attestationObject),
-                clientDataJSON: this.bufferEncode(clientDataJSON),
+                attestationObject: this.arrayBufferToBase64(attestationObject),
+                clientDataJSON: this.arrayBufferToBase64(clientDataJSON),
             },
         };
         return obj;
+    }
+
+    uint8ArrayFromBase64Url(base64Url)
+    {
+        return Uint8Array.from(window.atob(base64Url.replace(/-/g, "+").replace(/_/g, "/")), (v) => v.charCodeAt(0));
+    }
+    
+     uint8ArrayFromBase64(base64)
+    {
+        return Uint8Array.from(window.atob(base64), (v) => v.charCodeAt(0));
     }
 }

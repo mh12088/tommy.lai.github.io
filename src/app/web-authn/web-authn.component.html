@@ -1,10 +1,9 @@
 <button class="btn" (click)="savePublicKey();">Save(test)</button>
-<button class="btn" (click)="signin()">Login(test)</button>
 <div class="register-form-container">
     <h2>
         Register
     </h2>
-    <form [formGroup]="userForm" (ngSubmit)="signup()">
+    <form [formGroup]="userForm">
         <div class="form-field">
             <label class="form-label">
                 <h4>Email  
@@ -38,8 +37,12 @@
             </h4>
         </div>
         <div>
-            <button class="btn" type="submit" [disabled]="userForm.invalid">Register</button>
+            <button class="btn" (click)="signup()"[disabled]="userForm.invalid">Register</button>
         </div>
+        <ng-container *ngIf="isRegistered">
+            <button class="btn" (click)="signin();">Login with Biometric
+            </button>
+        </ng-container>
     </form>
     <ng-container *ngIf="errorMsg">
         <p class="red errorMsg">

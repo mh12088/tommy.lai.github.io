@@ -14,15 +14,17 @@ export interface DecodedAttestionObj {
 }
 
 export interface Credential {
-    credentialId: Uint8Array;
-    publicKey: Uint8Array;
-    
+    credentialId?: Uint8Array;
+    publicKey?: Uint8Array;
+    credentialIdString?: string;
+    publicKeyString?: string;
 }
 
 export interface User {
     email?: string;
     mobileNumber?: string;
     credentials?: Credential[];
+    deviceId?: string;
 }
 
 export interface DecodedPublicKeyCredential {

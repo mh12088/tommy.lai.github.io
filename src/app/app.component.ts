@@ -12,7 +12,7 @@ export class AppComponent implements OnInit {
   constructor(private _$gaService: GoogleAnalyticsService) { }
 
   ngOnInit() {
-    // this._$gaService.init();
+    this._$gaService.init();
     const deviceId = uuid.v4();
     if (!localStorage.getItem("device_id")) {
       localStorage.setItem("device_id", deviceId);

@@ -10,19 +10,22 @@ const sendAnalyticsEvent = (event, window) => {
   if (event && isSend) {
     const request = event.request;
     console.log(request.url);
-    // window.cookieStore.get("_ga").then(resp => {
-    //   console.log(resp);
-    // })
     caches.match(request.url).then(function (response) {
-      if (response) {
-        console.log('Found response in cache:', response);
-        send('pwa_fetch_from_cache', { url: request.url }, window);
-        console.log("-----From cache:", request.url)
-      } else {
-        send('pwa_fetch_from_network', { url: request.url }, window);
-        // console.log("-----From network:", request.url)
-        console.log('No response found in cache. About to fetch from network...');
-      };
+      window.cookieStore.get('_ga').then((cookie) => {
+        if (cookie) {
+          const gaClientId = cookie.value.replace("GA1.1.", "");
+          clientId = gaClientId;
+        }
+        if (response) {
+          console.log('Found response in cache:', response);
+          send('pwa_fetch_from_cache', { url: request.url }, window);
+          console.log("-----From cache:", request.url)
+        } else {
+          send('pwa_fetch_from_network', { url: request.url }, window);
+          // console.log("-----From network:", request.url)
+          console.log('No response found in cache. About to fetch from network...');
+        };
+      });
     });
   };
 }
@@ -31,11 +34,12 @@ const send = (eventName, eventValue, window) => {
   const decodedGaConfig = getDecodedGaConfig(window);
   console.log('Sending analytics event');
   console.log(decodedGaConfig);
+
   return fetch(`https://www.google-analytics.com/mp/collect?measurement_id=${decodedGaConfig.measurementId}&api_secret=${decodedGaConfig.apiSecret}`, {
     method: "POST",
     body: JSON.stringify({
       "client_id": clientId,
-      "user_id": clientId,
+      // "user_id": clientId,
       "events": [{
         "name": eventName,
         "params": {
@@ -72,7 +76,7 @@ const getGaConfig = (origin) => {
   if (env) {
     gaConfig.measurementId = config[env].measurementId;
     gaConfig.apiSecret = config[env].apiSecret;
-    clientId = generateUUIDV4();
+    // clientId = generateUUIDV4();
   } else {
     console.log("env is not found");
   }
@@ -86,7 +90,7 @@ const getDecodedGaConfig = (window) => {
 }
 
 const generateUUIDV4 = () => {
-  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
     (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
   );
 }

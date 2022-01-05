@@ -12,10 +12,12 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-getToken(messaging, { vapidKey: "BDR7cEU2X-gx7thlDr9N28pzrpdauh-V4y508e45jnV8Mpj4ezYQDf-PveDkHLwg5P_n96Yo8W51ZWThDyConBE" }).then((currentToken) => {
+
+messaging.getToken({ vapidKey: 'BDR7cEU2X-gx7thlDr9N28pzrpdauh-V4y508e45jnV8Mpj4ezYQDf-PveDkHLwg5P_n96Yo8W51ZWThDyConBE' }).then((currentToken) => {
   if (currentToken) {
     // Send the token to your server and update the UI if necessary
     // ...
+    console.log(currentToken);
   } else {
     // Show permission request UI
     console.log('No registration token available. Request permission to generate one.');
@@ -26,4 +28,15 @@ getToken(messaging, { vapidKey: "BDR7cEU2X-gx7thlDr9N28pzrpdauh-V4y508e45jnV8Mpj
   // ...
 });
 
-getToken();
+messaging.onBackgroundMessage((payload) => {
+  console.log('[firebase-messaging-sw.js] Received background message ', payload);
+  // Customize notification here
+  const notificationTitle = 'Background Message Title';
+  const notificationOptions = {
+    body: 'Background Message body.',
+    icon: '/favicon.ico'
+  };
+
+  self.registration.showNotification(notificationTitle,
+    notificationOptions);
+});

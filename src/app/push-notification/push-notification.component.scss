@@ -1,0 +1,21 @@
+.push-notification-container {
+    .btn {
+        padding: 5px;
+        width: 120px;
+        height: auto;
+        background-color: #1976d2;
+        border: 1px solid white;
+        color: white;
+        cursor: pointer;
+        border-radius: 4px;
+        height: 35px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn:disabled {
+        background-color: lightgray;
+        cursor: not-allowed;
+     }
+}

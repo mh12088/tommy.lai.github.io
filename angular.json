@@ -28,7 +28,8 @@
               "src/assets",
               "src/manifest.webmanifest",
               "src/analytics-helper.js",
-              "src/ngsw-worker-modified.js"
+              "src/ngsw-worker-modified.js",
+              "src/firebase-messaging-sw.js"
               // "src/icon.png"
             ],
             "styles": [

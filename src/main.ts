@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(() => {
       if ('serviceWorker' in navigator) {
         console.log('Service Worker is supported');
-        navigator.serviceWorker.register('ngsw-worker-modified.js')
+        navigator.serviceWorker.register('./firebase-messaging-sw.js')
           .then(function (swReg) {
             console.log('Service Worker is registered', swReg);
           })

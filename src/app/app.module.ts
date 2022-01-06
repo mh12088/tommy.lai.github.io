@@ -10,12 +10,14 @@ import { environment } from '../environments/environment';
 import { PwaInstallPromotionComponent } from './pwa-install-promotion/pwa-install-promotion.component';
 import { HttpClientModule} from '@angular/common/http';
 import { TestService } from './web-authn/service/test-service';
+import { PushNotificationComponent } from './push-notification/push-notification.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     WebAuthnComponent,
-    PwaInstallPromotionComponent
+    PwaInstallPromotionComponent,
+    PushNotificationComponent
   ],
   imports: [
     BrowserModule,

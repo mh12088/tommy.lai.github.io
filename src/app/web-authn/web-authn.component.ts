@@ -1,8 +1,11 @@
-import { identifierModuleUrl } from '@angular/compiler';
+import { identifierModuleUrl, ThrowStmt } from '@angular/compiler';
 import { Component, OnInit, ɵɵsetComponentScope } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { from, of, pipe } from 'rxjs';
+import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { User } from './model/web-authn.model';
 import { MockService } from './service/mock-service';
+import { MockV2Service } from './service/mockV2-service';
 import { TestService } from './service/test-service';
 import { WebAuthnService } from './service/web-authn-service';
 
@@ -22,18 +25,21 @@ export class WebAuthnComponent implements OnInit {
   deviceId: string;
   isRegistered: boolean = false;
 
+
+  authenticator: any = {};
   constructor(
     private mockService: MockService,
     private webAuthnService: WebAuthnService,
     private testService: TestService,
+    private mockV2Service: MockV2Service
   ) { }
 
   ngOnInit(): void {
     this.userList = this.mockService.getAllUser();
     this.deviceId = localStorage.getItem("device_id") || "";
-    if(this.deviceId){
+    if (this.deviceId) {
       const user = this.userList.find(user => user.deviceId === this.deviceId);
-      if(user && user.credentials.length > 0) this.isRegistered = true;
+      if (user && user.credentials.length > 0) this.isRegistered = true;
     }
   }
 
@@ -80,26 +86,11 @@ export class WebAuthnComponent implements OnInit {
         // Hardcoded on frontend
         console.log("---------Public key Resonse----------");
         console.log(credential);
-        const obj = {
-          id: credential.id,
-          type: credential.type,
-          response: {
-            attestationObject: null,
-            clientDataJSON: null
-          },
-          rawId: null
-        };
-        obj.response.attestationObject = new Uint8Array(credential.response.attestationObject);
-        obj.response.clientDataJSON = new Uint8Array(credential.response.clientDataJSON);
-        obj.rawId = new Uint8Array(credential.rawId);
-        console.log(JSON.stringify(obj));
         console.log("---------Public key Resonse(URLBase64)----------");
-        const urlbase64 = this.mockService.encodePublicKeyCredential(credential);
+        const urlbase64 = this.mockService.decodePublicKeyCredentialToBase64String(credential);
         console.log(JSON.stringify(urlbase64));
-        console.log(JSON.stringify(this.mockService.bufferDecode(urlbase64.response.clientDataJSON)));
-        console.log(JSON.stringify(this.mockService.bufferDecode(urlbase64.response.attestationObject)));
-        console.log("---------Public key Resonse(decoded)----------");
-        console.log(JSON.stringify(this.mockService.decodePublicKeyCredential(credential)));
+        // console.log("---------Public key Resonse(decoded)----------");
+        // console.log(JSON.stringify(this.mockService.decodePublicKeyCredential(credential)));
         const valid = this.mockService.registerCredential(user, credential);
         if (valid) {
           alert("Registration Successful");
@@ -132,7 +123,7 @@ export class WebAuthnComponent implements OnInit {
   }
 
   signin(user?: User) {
-    let userFromDB: any = {credentials: []};
+    let userFromDB: any = { credentials: [] };
     if (user) {
       userFromDB = this.mockService.getUserByMobileNumber(user.mobileNumber);
     } else {
@@ -146,27 +137,30 @@ export class WebAuthnComponent implements OnInit {
         alert("Authentication Successful");
         console.log("----------Assertion response----------");
         console.log(assertion);
-        const obj = {
-          id: assertion.id,
-          type: assertion.type,
-          response: {
-            authenticatorData: null,
-            clientDataJSON: null,
-            signature: null,
-            userHandle: null,
-          },
-          rawId: null
-        };
-        obj.response.authenticatorData = new Uint8Array(assertion.response.authenticatorData);
-        obj.response.clientDataJSON = new Uint8Array(assertion.response.clientDataJSON);
-        obj.response.signature = new Uint8Array(assertion.response.signature);
-        obj.response.userHandle = new Uint8Array(assertion.response.userHandle);
-        obj.rawId = new Uint8Array(assertion.rawId);
-        console.log(JSON.stringify(obj));
-        this.mockService.decodeAssertion(assertion);
+        // const obj = {
+        //   id: assertion.id,
+        //   type: assertion.type,
+        //   response: {
+        //     authenticatorData: null,
+        //     clientDataJSON: null,
+        //     signature: null,
+        //     userHandle: null,
+        //   },
+        //   rawId: null
+        // };
+        // obj.response.authenticatorData = new Uint8Array(assertion.response.authenticatorData);
+        // obj.response.clientDataJSON = new Uint8Array(assertion.response.clientDataJSON);
+        // obj.response.signature = new Uint8Array(assertion.response.signature);
+        // obj.response.userHandle = new Uint8Array(assertion.response.userHandle);
+        // obj.rawId = new Uint8Array(assertion.rawId);
+        // console.log(JSON.stringify(obj));
+        // this.mockService.decodeAssertion(assertion);
         // TODO: Call server to validate assertion
         // When server return ok,login successful else login failed
 
+        console.log("---------Public key Resonse(URLBase64)----------");
+        const urlbase64 = this.mockService.decodePublicKeyCredentialToBase64String(assertion);
+        console.log(JSON.stringify(urlbase64));
       })
       .catch((error) => {
         alert("Authentication Failed");
@@ -176,13 +170,74 @@ export class WebAuthnComponent implements OnInit {
   }
 
 
-  savePublicKey() {
-    this.testService.savePublicKey().subscribe(
+  webAuthnRegister() {
+    this.testService.webAuthnRegister().subscribe(
+      response => {
+        console.log(response);
+        this.authenticator = response;
+      },
+      error => {
+        console.log(error);
+      });
+  }
+
+  webAuthnLogin() {
+    this.testService.webAuthnLogin(this.authenticator).subscribe(
       response => {
         console.log(response)
       },
       error => {
         console.log(error);
       });
+  }
+
+  signupFlow() {
+    // 1. Get challenge
+    // 2. Call webauthn lib to register
+    // 3. Pass credential to server to validate and save
+    const user = { mobileNumber: "11111111", email: "tommy@gmail.com" };
+    this.mockV2Service.getChallenge().pipe(
+      switchMap(challenge => {
+        return from(new Promise((resolve, reject) => {
+          this.mockV2Service.webAuthnSignup(user, challenge)
+            .then(credential => {
+              const credentialBase64Url = this.mockService.decodePublicKeyCredentialToBase64String(credential);
+              resolve(credentialBase64Url)
+            })
+            .catch(error => reject(error))
+        }))
+      }),
+      switchMap(credentialBase64Url => {
+        return this.mockV2Service.signup(credentialBase64Url);
+      }),
+      catchError(error => of(`Error: ${error}`))
+    ).subscribe(resp => {
+      console.log(resp);
+    });
+  }
+
+  signinFlow() {
+    // 1. Get challenge
+    // 2. Call webauthn lib to get assertion
+    // 3. Pass assertion to server to validate and login
+    const user = { mobileNumber: "11111111", email: "tommy@gmail.com" };
+    this.mockV2Service.getChallenge().pipe(
+      switchMap(challenge => {
+        return from(new Promise((resolve, reject) => {
+          this.mockV2Service.webAuthnSignin(user, challenge)
+            .then(assertion => {
+              const credentialBase64Url = this.mockService.decodePublicKeyCredentialToBase64String(assertion);
+              resolve(credentialBase64Url);
+            })
+            .catch(error => reject(error))
+        }))
+      }),
+      switchMap(credentialBase64Url => {
+        return this.mockV2Service.signin(credentialBase64Url);
+      }),
+      catchError(error => of(`Error: ${error}`))
+    ).subscribe(resp => {
+      console.log(resp);
+    });
   }
 }

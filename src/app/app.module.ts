@@ -11,6 +11,7 @@ import { PwaInstallPromotionComponent } from './pwa-install-promotion/pwa-instal
 import { HttpClientModule} from '@angular/common/http';
 import { TestService } from './web-authn/service/test-service';
 import { PushNotificationComponent } from './push-notification/push-notification.component';
+import { MockV2Service } from './web-authn/service/mockV2-service';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,7 @@ import { PushNotificationComponent } from './push-notification/push-notification
     ServiceWorkerModule.register('ngsw-worker-modified.js', { enabled: environment.production }),    
     HttpClientModule
   ],
-  providers: [TestService],
+  providers: [TestService, MockV2Service],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

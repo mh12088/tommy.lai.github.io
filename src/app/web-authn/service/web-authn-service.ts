@@ -34,6 +34,10 @@ export class WebAuthnService {
       timeout: 100000,
       attestation: 'direct'
     };
+
+    console.log("----------ID----------")
+    console.log("----------challenge----------");
+    console.log(user.mobileNumber);
     console.log("----------Sign up Payload----------");
     console.log(JSON.stringify(publicKeyCredentialCreationOptions));
     return navigator.credentials.create({
@@ -42,11 +46,13 @@ export class WebAuthnService {
   }
 
   webAuthnSignin(user: User): Promise<Credential> {
+    console.log("USER")
     const allowCredentials: PublicKeyCredentialDescriptor[] = user.credentials.map(c => {
       console.log(c.credentialId);
-      return { transports: ['internal'], type: 'public-key', id: new Uint8Array(this.mockService.base64ToArrayBuffer(c.credentialIdString))
-      // id: Uint8Array.from(c.credentialId)
-     };
+      return {
+        transports: ['internal'], type: 'public-key', id: new Uint8Array(this.mockService.base64ToArrayBuffer(c.credentialIdString))
+        // id: Uint8Array.from(c.credentialId)
+      };
     });
 
     console.log("----------Sign in challenge----------");

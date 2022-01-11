@@ -75,7 +75,6 @@ export class MockService {
         return this.userList[userIndex];
     }
 
-
     base64urlEncode(arraybuffer) {
         let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
         // Use a lookup table to find the index.
@@ -216,9 +215,6 @@ export class MockService {
         console.log(userHandle);
     }
 
-
-
-
     arrayBufferToBase64(buffer) {
         var binary = '';
         var bytes = new Uint8Array(buffer);
@@ -247,22 +243,6 @@ export class MockService {
 
     bufferDecode(value) {
         return Uint8Array.from(atob(value), c => c.charCodeAt(0));
-    }
-
-    encodePublicKeyCredential(credential: PublicKeyCredential) {
-        let attestationObject = (credential.response as any).attestationObject;
-        let clientDataJSON = credential.response.clientDataJSON;
-        let rawId = credential.rawId;
-        const obj = {
-            id: credential.id,
-            rawId: this.arrayBufferToBase64(rawId),
-            type: credential.type,
-            response: {
-                attestationObject: this.arrayBufferToBase64(attestationObject),
-                clientDataJSON: this.arrayBufferToBase64(clientDataJSON),
-            },
-        };
-        return obj;
     }
 
     uint8ArrayFromBase64Url(base64Url)

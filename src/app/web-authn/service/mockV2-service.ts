@@ -9,6 +9,12 @@ export class MockV2Service {
     constructor(private mockService: MockService) {
     }
 
+    generateUUIDv4() {
+        return (`${[1e7]}${-1e3}${-4e3}${-8e3}${-1e11}`).replace(/[018]/g, (c: any) =>
+            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+        );
+    }
+
     getChallenge(): Observable<any> {
         return of("getChallenge");
     }
@@ -142,5 +148,4 @@ export class MockV2Service {
         idLenBytes.forEach((value, index) => dataView.setUint8(index, value));
         return dataView.getUint16(0);
     }
-
 }

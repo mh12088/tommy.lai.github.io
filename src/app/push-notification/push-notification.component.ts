@@ -14,6 +14,14 @@ export class PushNotificationComponent implements OnInit {
   }
 
   requestPermission() {
+    if ('PushManager' in window) {
+      Notification.requestPermission(function (status) {
+        console.log('Notification permission status:', status);
+      });
+      console.log('Push messaging is supported');
+    } else {
+      console.error('Push messaging is not supported');
+    }
   }
 
 }

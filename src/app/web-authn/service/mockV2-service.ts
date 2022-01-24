@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
-import { of } from 'rxjs';
+import { from, of } from 'rxjs';
 import { DecodedAttestionObj, User } from '../model/web-authn.model';
 import { MockService } from './mock-service';
 import * as CBOR from '../utils/cbor';
@@ -80,7 +80,7 @@ export class MockV2Service {
             },
             pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
             authenticatorSelection: {
-                // authenticatorAttachment: "platform",
+                authenticatorAttachment: "platform",
                 userVerification: "required"
             },
             timeout: 100000,
@@ -117,6 +117,30 @@ export class MockV2Service {
         });
     }
 
+
+    isSupportBiometricLogin(): Observable<boolean> {
+        if (window.PublicKeyCredential) {
+            return from(new Promise<boolean>((resolve, reject) => {
+                PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+                    .then(available => {
+                        if (available) {
+                            // console.log("Supported.");
+                            resolve(true);
+                        } else {
+                            // console.log("WebAuthn supported, Platform Authenticator *not* supported.");
+                            resolve(false);
+                        }
+                    })
+                    .catch(error => {
+                        // console.log("Something went wrong.");
+                        resolve(false);
+                    })
+            }));
+        } else {
+            // console.log("Not supported.");
+            return of(false);
+        }
+    };
 
     // ----------------------------------------------------------------------------------------------------------
 

@@ -1,8 +1,8 @@
 import { identifierModuleUrl, ThrowStmt } from '@angular/compiler';
 import { Component, OnInit, ɵɵsetComponentScope } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { from, of, pipe } from 'rxjs';
-import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
+import { from, observable, Observable, of, pipe } from 'rxjs';
+import { catchError, map, subscribeOn, switchMap, take, tap } from 'rxjs/operators';
 import { User } from './model/web-authn.model';
 import { MockService } from './service/mock-service';
 import { MockV2Service } from './service/mockV2-service';
@@ -26,6 +26,7 @@ export class WebAuthnComponent implements OnInit {
   isRegistered: boolean = false;
   savedCredentialId: Uint8Array;
 
+  flag$: Observable<boolean>;
   authenticator: any = {};
   constructor(
     private mockService: MockService,
@@ -242,6 +243,30 @@ export class WebAuthnComponent implements OnInit {
       ).subscribe(resp => {
         console.log(resp);
       });
+    }
+  }
+
+  isSupportBiometricLogin(): Observable<boolean> {
+    if (window.PublicKeyCredential) {
+      return from(new Promise<boolean>((resolve, reject) => {
+        PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
+          .then(available => {
+            if (available) {
+              // console.log("Supported.");
+              resolve(true);
+            } else {
+              // console.log("WebAuthn supported, Platform Authenticator *not* supported.");
+              resolve(false);
+            }
+          })
+          .catch(error => {
+            // console.log("Something went wrong.");
+            resolve(false);
+          })
+      }));
+    } else {
+      // console.log("Not supported.");
+      return of(false);
     }
   }
 }

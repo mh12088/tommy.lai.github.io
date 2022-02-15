@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1644900178418,
+  "timestamp": 1644900405253,
   "index": "https://mh12088.github.io/tommy.lai.github.io/index.html",
   "assetGroups": [
     {
@@ -57,7 +57,7 @@
     "https://mh12088.github.io/tommy.lai.github.io/assets/icons/icon-96x96.png": "3914125a4b445bf111c5627875fc190f560daa41",
     "https://mh12088.github.io/tommy.lai.github.io/combined-sw.js": "8aaad59ba3fe1e638c4e71e798be629da85716e5",
     "https://mh12088.github.io/tommy.lai.github.io/favicon.ico": "7d51d8287de9f4eaa2422115b7cb43dc30054c03",
-    "https://mh12088.github.io/tommy.lai.github.io/firebase-messaging-sw.js": "2b42c3e7c2051f36053aeb1926df3415794f2459",
+    "https://mh12088.github.io/tommy.lai.github.io/firebase-messaging-sw.js": "eec752f8ef85a17f4c90717a8ef2fc470246c3fa",
     "https://mh12088.github.io/tommy.lai.github.io/index.html": "b39d8e1dab27f709e7619c5aa4f15a8640444207",
     "https://mh12088.github.io/tommy.lai.github.io/main-es2015.266f6b2f8b5c72e98517.js": "72a0ce98c53ce04f877c82bd6d4f36f1e9fbc6bc",
     "https://mh12088.github.io/tommy.lai.github.io/main-es5.266f6b2f8b5c72e98517.js": "b28e12c920d772833beed3b086a5bda4197ccd06",

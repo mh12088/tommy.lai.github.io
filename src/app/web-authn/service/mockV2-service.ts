@@ -4,22 +4,23 @@ import { from, of } from 'rxjs';
 import { DecodedAttestionObj, User } from '../model/web-authn.model';
 import { MockService } from './mock-service';
 import * as CBOR from '../utils/cbor';
+import { catchError, finalize, switchMap } from 'rxjs/operators';
 @Injectable()
 export class MockV2Service {
     constructor(private mockService: MockService) {
     }
 
-    generateUUIDv4() {
+    private generateUUIDv4() {
         return (`${[1e7]}${-1e3}${-4e3}${-8e3}${-1e11}`).replace(/[018]/g, (c: any) =>
             (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
         );
     }
 
-    getChallenge(): Observable<any> {
-        return of("getChallenge");
+    private getChallenge(): Observable<any> {
+        return of(this.generateUUIDv4());
     }
 
-    publicKeyCredentialToBase64Url(publicKeyCred) {
+    private publicKeyCredentialToBase64Url(publicKeyCred) {
         if (publicKeyCred instanceof ArrayBuffer) {
             return this.base64urlEncode(publicKeyCred);
         } else if (publicKeyCred instanceof Array) {
@@ -33,7 +34,7 @@ export class MockV2Service {
         } else return publicKeyCred;
     }
 
-    base64urlEncode(arraybuffer) {
+    private base64urlEncode(arraybuffer) {
         let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
         // Use a lookup table to find the index.
         let lookup = new Uint8Array(256);
@@ -59,11 +60,11 @@ export class MockV2Service {
         return base64;
     }
 
-    signup(credential): Observable<any> {
+    private signup(credential): Observable<any> {
         return of("signup");
     }
 
-    webAuthnSignup(user: User, challenge: string): Promise<Credential> {
+    private webAuthnSignup(user: User, challenge: string): Promise<Credential> {
         const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
             // Should generate from server
             challenge: Uint8Array.from(challenge, c => c.charCodeAt(0)),
@@ -91,11 +92,11 @@ export class MockV2Service {
         });
     }
 
-    signin(credential): Observable<any> {
+    private signin(credential): Observable<any> {
         return of("signin");
     }
 
-    webAuthnSignin(user: User, challenge: string): Promise<Credential> {
+    private webAuthnSignin(user: User, challenge: string): Promise<Credential> {
         const allowCredentials: PublicKeyCredentialDescriptor[] = user.credentials.map(c => {
             return {
                 transports: ['internal'], type: 'public-key',
@@ -118,7 +119,7 @@ export class MockV2Service {
     }
 
 
-    isSupportBiometricLogin(): Observable<boolean> {
+    private isSupportBiometricLogin(): Observable<boolean> {
         if (window.PublicKeyCredential) {
             return from(new Promise<boolean>((resolve, reject) => {
                 PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()
@@ -140,6 +141,50 @@ export class MockV2Service {
             // console.log("Not supported.");
             return of(false);
         }
+    };
+
+    signupFlow(user): Observable<any> {
+        return this.getChallenge().pipe(
+            switchMap(challenge => {
+                return from(
+                    this.webAuthnSignup(user, challenge)
+                        .then((credential: any) => {
+                            const credentialBase64Url = this.publicKeyCredentialToBase64Url(credential);
+                            Promise.resolve(credentialBase64Url)
+                        })
+                        .catch(error => Promise.reject(error))
+                )
+            }),
+            switchMap(credentialBase64Url => {
+                return this.signup(credentialBase64Url);
+            }),
+            catchError(error => {
+                // handle error
+                return of(error);
+            }),
+            finalize(() => console.log("test"))
+        );
+    };
+
+    signinFlow(user: any): Observable<any> {
+        return this.getChallenge().pipe(
+            switchMap(challenge => {
+                return from(this.webAuthnSignin(user, challenge)
+                    .then(assertion => {
+                        const credentialBase64Url = this.publicKeyCredentialToBase64Url(assertion);
+                        Promise.resolve(credentialBase64Url);
+                    })
+                    .catch(error => Promise.reject(error))
+                )
+            }),
+            switchMap(credentialBase64Url => {
+                return this.signin(credentialBase64Url);
+            }),
+            catchError(error => {
+                // handle error 
+                return of(error)
+            })
+        );
     };
 
     // ----------------------------------------------------------------------------------------------------------

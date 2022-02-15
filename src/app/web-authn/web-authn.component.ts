@@ -192,59 +192,71 @@ export class WebAuthnComponent implements OnInit {
       });
   }
 
-  signupFlow() {
-    // 1. Get challenge
-    // 2. Call webauthn lib to register new public key
-    // 3. Pass credential to server to validate and save
+  // signupFlow() {
+  //   // 1. Get challenge
+  //   // 2. Call webauthn lib to register new public key
+  //   // 3. Pass credential to server to validate and save
+  //   const user = { mobileNumber: "11111111", email: "tommy@gmail.com" };
+  //   this.mockV2Service.getChallenge().pipe(
+  //     switchMap(challenge => {
+  //       console.log(challenge);
+  //       return from(new Promise((resolve, reject) => {
+  //         this.mockV2Service.webAuthnSignup(user, challenge)
+  //           .then((credential: any) => {
+  //             const credentialBase64Url = this.mockV2Service.publicKeyCredentialToBase64Url(credential);
+  //             this.savedCredentialId = this.mockV2Service.registerCredential(credential);
+  //             resolve(credentialBase64Url)
+  //           })
+  //           .catch(error => reject(error))
+  //       }))
+  //     }),
+  //     switchMap(credentialBase64Url => {
+  //       return this.mockV2Service.signup(credentialBase64Url);
+  //     }),
+  //     catchError(error => of(`Error: ${error}`))
+  //   ).subscribe(data => {
+  //     console.log(data);
+  //   });
+  // }
+
+  signupFlowV2() {
     const user = { mobileNumber: "11111111", email: "tommy@gmail.com" };
-    this.mockV2Service.getChallenge().pipe(
-      switchMap(challenge => {
-        console.log(challenge);
-        return from(new Promise((resolve, reject) => {
-          this.mockV2Service.webAuthnSignup(user, challenge)
-            .then((credential: any) => {
-              const credentialBase64Url = this.mockV2Service.publicKeyCredentialToBase64Url(credential);
-              this.savedCredentialId = this.mockV2Service.registerCredential(credential);
-              resolve(credentialBase64Url)
-            })
-            .catch(error => reject(error))
-        }))
-      }),
-      switchMap(credentialBase64Url => {
-        return this.mockV2Service.signup(credentialBase64Url);
-      }),
-      catchError(error => of(`Error: ${error}`))
-    ).subscribe(data => {
-      console.log(data);
-    });
+    this.mockV2Service.signupFlow(user).subscribe(data => { console.log(data) });
   }
 
-  signinFlow() {
-    // 1. Get challenge and credential Id
-    // 2. Call webauthn lib to validate credential Id and assertion
-    // 3. Pass assertion to server to validate and login
+
+  signinFlowV2() {
     const user = { mobileNumber: "11111111", email: "tommy@gmail.com", credentials: [{ credentialId: this.savedCredentialId }] };
-    if (this.savedCredentialId) {
-      this.mockV2Service.getChallenge().pipe(
-        switchMap(challenge => {
-          return from(new Promise((resolve, reject) => {
-            this.mockV2Service.webAuthnSignin(user, challenge)
-              .then(assertion => {
-                const credentialBase64Url = this.mockV2Service.publicKeyCredentialToBase64Url(assertion);
-                resolve(credentialBase64Url);
-              })
-              .catch(error => reject(error))
-          }))
-        }),
-        switchMap(credentialBase64Url => {
-          return this.mockV2Service.signin(credentialBase64Url);
-        }),
-        catchError(error => of(`Error: ${error}`))
-      ).subscribe(resp => {
-        console.log(resp);
-      });
-    }
+    this.mockV2Service.signinFlow(user).subscribe(data => { console.log(data) });
   }
+
+
+  // signinFlow() {
+  //   // 1. Get challenge and credential Id
+  //   // 2. Call webauthn lib to validate credential Id and assertion
+  //   // 3. Pass assertion to server to validate and login
+  //   const user = { mobileNumber: "11111111", email: "tommy@gmail.com", credentials: [{ credentialId: this.savedCredentialId }] };
+  //   if (this.savedCredentialId) {
+  //     this.mockV2Service.getChallenge().pipe(
+  //       switchMap(challenge => {
+  //         return from(new Promise((resolve, reject) => {
+  //           this.mockV2Service.webAuthnSignin(user, challenge)
+  //             .then(assertion => {
+  //               const credentialBase64Url = this.mockV2Service.publicKeyCredentialToBase64Url(assertion);
+  //               resolve(credentialBase64Url);
+  //             })
+  //             .catch(error => reject(error))
+  //         }))
+  //       }),
+  //       switchMap(credentialBase64Url => {
+  //         return this.mockV2Service.signin(credentialBase64Url);
+  //       }),
+  //       catchError(error => of(`Error: ${error}`))
+  //     ).subscribe(resp => {
+  //       console.log(resp);
+  //     });
+  //   }
+  // }
 
   isSupportBiometricLogin(): Observable<boolean> {
     if (window.PublicKeyCredential) {

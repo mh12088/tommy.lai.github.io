@@ -17,7 +17,7 @@ messaging.getToken({ vapidKey: 'BDR7cEU2X-gx7thlDr9N28pzrpdauh-V4y508e45jnV8Mpj4
     // Send the token to your server and update the UI if necessary
     // ...
     console.log(currentToken);
-    alert(currentToken);
+    window.alert(currentToken);
   } else {
     // Show permission request UI
     console.log('No registration token available. Request permission to generate one.');

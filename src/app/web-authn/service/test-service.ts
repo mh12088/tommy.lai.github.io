@@ -40,19 +40,19 @@ export class TestService {
     webAuthnRegister(): Observable<any> {
         this.url = `${this.baseUrl}/web-authn-registration`;
 
-        // const utf8Decoder = new TextDecoder('utf-8');
-        // const clientData = this.mockService.base64urlDecode(this.registerPayload.response.clientDataJSON);
-        // const decodedClientData = utf8Decoder.decode(clientData);
-        // const clientDataObj: ClientDataObj = JSON.parse(decodedClientData);
-        // console.log(clientDataObj);
+        const utf8Decoder = new TextDecoder('utf-8');
+        const clientData = this.mockService.base64urlDecode(this.registerPayload.response.clientDataJSON);
+        const decodedClientData = utf8Decoder.decode(clientData);
+        const clientDataObj: ClientDataObj = JSON.parse(decodedClientData);
+        console.log(clientDataObj);
 
-        // const attestationObject = this.mockService.base64urlDecode(this.registerPayload.response.attestationObject);
-        // console.log(attestationObject);
-        // const decodedAttestationObj: DecodedAttestionObj = CBOR.decode(attestationObject);
-        // console.log(decodedAttestationObj);
+        const attestationObject = this.mockService.base64urlDecode(this.registerPayload.response.attestationObject);
+        console.log(attestationObject);
+        const decodedAttestationObj: DecodedAttestionObj = CBOR.decode(attestationObject);
+        console.log(decodedAttestationObj);
 
-        // const credentialId = this.mockService.base64urlDecode("d1U_F_EYDdh37vHhe3bb1Y2uWFw");
-        // console.log(credentialId);
+        const credentialId = this.mockService.base64urlDecode("d1U_F_EYDdh37vHhe3bb1Y2uWFw");
+        console.log(credentialId);
 
         return this.http.post<any>(this.url, this.registerPayload);
     }

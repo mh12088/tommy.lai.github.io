@@ -28,8 +28,8 @@ export class WebAuthnService {
       },
       pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
       authenticatorSelection: {
-        authenticatorAttachment: 'platform',
-        // requireResidentKey: true,
+        authenticatorAttachment: "platform",
+        requireResidentKey: true,
       },
       timeout: 100000,
       attestation: 'direct'

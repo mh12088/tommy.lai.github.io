@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { User, ClientDataObj, DecodedAttestionObj, DecodedPublicKeyCredential } from '../model/web-authn.model';
+import { User, ClientDataObj, DecodedAttestionObj, DecodedPublicKeyCredential } from '../models/web-authn.model';
 import * as CBOR from '../utils/cbor';
 import * as base64js from '../utils/base64';
 import * as uuid from 'uuid';

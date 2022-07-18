@@ -1,0 +1,78 @@
+.register-form-container {
+    .form-field {
+        &.checkbox {
+            display: inline-flex;
+            align-items: center;
+            input {
+                width: 20px;
+                height: 20px;
+            }
+        }
+        .form-label {
+            display: block;
+            min-width: 60px;
+        }
+        &:not(.checkbox) {
+            input {
+                min-width: 250px;
+            }
+        }
+    }
+   
+    .btn {
+        padding: 5px;
+        width: 120px;
+        height: auto;
+        background-color: #1976d2;
+        border: 1px solid white;
+        color: white;
+        cursor: pointer;
+        border-radius: 4px;
+        height: 35px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn:disabled {
+        background-color: lightgray;
+        cursor: not-allowed;
+     }
+
+    line {
+        margin: 10px 0;
+        border-bottom: 1px solid black;
+    }
+   
+    .red {
+        color: #f44336;
+    }
+   
+    .bg-red {
+        background-color: #f44336;
+    }
+}
+
+.user-list-container {
+    .line {
+        margin: 10px 0;
+        border-bottom: 1px solid black;
+    }
+
+    .btn {
+        padding: 5px;
+        width: auto;
+        height: auto;
+        background-color: #1976d2;
+        border: 1px solid white;
+        color: white;
+        cursor: pointer;
+        border-radius: 4px;
+        height: 35px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        &.delete-btn {
+            background-color: #f44336;
+        }
+    }
+}

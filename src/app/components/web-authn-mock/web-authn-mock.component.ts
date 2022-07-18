@@ -1,20 +1,16 @@
-import { identifierModuleUrl, ThrowStmt } from '@angular/compiler';
-import { Component, OnInit, ɵɵsetComponentScope } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { from, observable, Observable, of, pipe } from 'rxjs';
-import { catchError, map, subscribeOn, switchMap, take, tap } from 'rxjs/operators';
-import { User } from './model/web-authn.model';
-import { MockService } from './service/mock-service';
-import { MockV2Service } from './service/mockV2-service';
-import { TestService } from './service/test-service';
-import { WebAuthnService } from './service/web-authn-service';
+import { from, Observable, of } from 'rxjs';
+import { MockService } from 'src/app/services/mock.service';
+import { User } from 'src/app/models/web-authn.model';
+import { WebAuthnService } from 'src/app/services/web-authn.service';
 
 @Component({
-  selector: 'app-web-authn',
-  templateUrl: './web-authn.component.html',
-  styleUrls: ['./web-authn.component.scss']
+  selector: 'app-web-authn-mock',
+  templateUrl: './web-authn-mock.component.html',
+  styleUrls: ['./web-authn-mock.component.scss']
 })
-export class WebAuthnComponent implements OnInit {
+export class WebAuthnMockComponent implements OnInit {
   errorMsg: string = "";
   userList: User[] = [];
   userForm = new FormGroup({
@@ -25,24 +21,12 @@ export class WebAuthnComponent implements OnInit {
   deviceId: string;
   isRegistered: boolean = false;
   savedCredentialId: Uint8Array;
-
-  flag$: Observable<boolean>;
   authenticator: any = {};
+
   constructor(
     private mockService: MockService,
-    private webAuthnService: WebAuthnService,
-    private testService: TestService,
-    private mockV2Service: MockV2Service
+    private webAuthnService: WebAuthnService
   ) { }
-
-  ngOnInit(): void {
-    this.userList = this.mockService.getAllUser();
-    this.deviceId = localStorage.getItem("device_id") || "";
-    if (this.deviceId) {
-      const user = this.userList.find(user => user.deviceId === this.deviceId);
-      if (user && user.credentials.length > 0) this.isRegistered = true;
-    }
-  }
 
   get email(): any {
     return this.userForm.get('email');
@@ -56,13 +40,23 @@ export class WebAuthnComponent implements OnInit {
     return this.userForm.get('isEnableBiometricLogin')
   }
 
+  ngOnInit(): void {
+    this.userList = this.mockService.getAllUser();
+    this.deviceId = localStorage.getItem("device_id") || "";
+    if (this.deviceId) {
+      const user = this.userList.find(user => user.deviceId === this.deviceId);
+      if (user && user.credentials.length > 0) this.isRegistered = true;
+    }
+  }
+
   signup(): void {
     const user: User = {
-      mobileNumber: this.userForm.get('mobileNumber').value,
-      email: this.userForm.get('email').value,
+      mobileNumber: this.mobileNumber().value,
+      email: this.email().value,
       credentials: [],
       deviceId: this.deviceId,
     };
+    // Duplicate user create Checking
     const errorMsgList = this.mockService.validateCreateUser(user);
     if (errorMsgList.length > 0) {
       alert(errorMsgList.toString());
@@ -71,15 +65,16 @@ export class WebAuthnComponent implements OnInit {
     const userFromDB = this.mockService.createUser(user);
     this.userList = this.mockService.getAllUser();
     alert("Your Account Has been Created.");
-    if (this.userForm.get('isEnableBiometricLogin').value) {
+    const isEnableBiometricLogin = this.isEnableBiometricLogin().value;
+    if (isEnableBiometricLogin) {
       alert("Enable biometric login...");
       this.webAuthnSignup(userFromDB);
     }
   }
 
-  webAuthnSignup(user: User): void {
+  private webAuthnSignup(user: User): void {
     // Ask for WebAuthn Auth method
-    this.webAuthnService.webAuthnSignup(user)
+    this.webAuthnService.signup(user)
       .then((credential: any) => {
         console.log("---------Credentials Create response---------");
         console.log(JSON.stringify(credential));
@@ -133,7 +128,7 @@ export class WebAuthnComponent implements OnInit {
 
     console.log("----------Saved User:----------");
     console.log(JSON.stringify(userFromDB));
-    this.webAuthnService.webAuthnSignin(userFromDB)
+    this.webAuthnService.signin(userFromDB)
       .then((assertion: any) => {
         alert("Authentication Successful");
         console.log("----------Assertion response----------");
@@ -169,94 +164,6 @@ export class WebAuthnComponent implements OnInit {
         console.log("Authentication Failed: ", error);
       });
   }
-
-
-  webAuthnRegister() {
-    this.testService.webAuthnRegister().subscribe(
-      response => {
-        console.log(response);
-        this.authenticator = response;
-      },
-      error => {
-        console.log(error);
-      });
-  }
-
-  webAuthnLogin() {
-    this.testService.webAuthnLogin(this.authenticator).subscribe(
-      response => {
-        console.log(response)
-      },
-      error => {
-        console.log(error);
-      });
-  }
-
-  // signupFlow() {
-  //   // 1. Get challenge
-  //   // 2. Call webauthn lib to register new public key
-  //   // 3. Pass credential to server to validate and save
-  //   const user = { mobileNumber: "11111111", email: "tommy@gmail.com" };
-  //   this.mockV2Service.getChallenge().pipe(
-  //     switchMap(challenge => {
-  //       console.log(challenge);
-  //       return from(new Promise((resolve, reject) => {
-  //         this.mockV2Service.webAuthnSignup(user, challenge)
-  //           .then((credential: any) => {
-  //             const credentialBase64Url = this.mockV2Service.publicKeyCredentialToBase64Url(credential);
-  //             this.savedCredentialId = this.mockV2Service.registerCredential(credential);
-  //             resolve(credentialBase64Url)
-  //           })
-  //           .catch(error => reject(error))
-  //       }))
-  //     }),
-  //     switchMap(credentialBase64Url => {
-  //       return this.mockV2Service.signup(credentialBase64Url);
-  //     }),
-  //     catchError(error => of(`Error: ${error}`))
-  //   ).subscribe(data => {
-  //     console.log(data);
-  //   });
-  // }
-
-  signupFlowV2() {
-    const user = { mobileNumber: "11111111", email: "tommy@gmail.com" };
-    this.mockV2Service.signupFlow(user).subscribe(data => { console.log(data) });
-  }
-
-
-  signinFlowV2() {
-    const user = { mobileNumber: "11111111", email: "tommy@gmail.com", credentials: [{ credentialId: this.savedCredentialId }] };
-    this.mockV2Service.signinFlow(user).subscribe(data => { console.log(data) });
-  }
-
-
-  // signinFlow() {
-  //   // 1. Get challenge and credential Id
-  //   // 2. Call webauthn lib to validate credential Id and assertion
-  //   // 3. Pass assertion to server to validate and login
-  //   const user = { mobileNumber: "11111111", email: "tommy@gmail.com", credentials: [{ credentialId: this.savedCredentialId }] };
-  //   if (this.savedCredentialId) {
-  //     this.mockV2Service.getChallenge().pipe(
-  //       switchMap(challenge => {
-  //         return from(new Promise((resolve, reject) => {
-  //           this.mockV2Service.webAuthnSignin(user, challenge)
-  //             .then(assertion => {
-  //               const credentialBase64Url = this.mockV2Service.publicKeyCredentialToBase64Url(assertion);
-  //               resolve(credentialBase64Url);
-  //             })
-  //             .catch(error => reject(error))
-  //         }))
-  //       }),
-  //       switchMap(credentialBase64Url => {
-  //         return this.mockV2Service.signin(credentialBase64Url);
-  //       }),
-  //       catchError(error => of(`Error: ${error}`))
-  //     ).subscribe(resp => {
-  //       console.log(resp);
-  //     });
-  //   }
-  // }
 
   isSupportBiometricLogin(): Observable<boolean> {
     if (window.PublicKeyCredential) {

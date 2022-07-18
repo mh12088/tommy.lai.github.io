@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { from, of } from 'rxjs';
-import { DecodedAttestionObj, User } from '../model/web-authn.model';
+import { DecodedAttestionObj, User } from 'src/app/models/web-authn.model';
 import { MockService } from './mock-service';
-import * as CBOR from '../utils/cbor';
+import * as CBOR from 'src/app/utils/cbor';
 import { catchError, finalize, switchMap } from 'rxjs/operators';
 @Injectable()
 export class MockV2Service {

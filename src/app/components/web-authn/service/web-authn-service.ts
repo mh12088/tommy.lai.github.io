@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
+import { User } from 'src/app/models/web-authn.model';
 import { MockService } from './mock-service';
-import { User } from '../model/web-authn.model';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +28,7 @@ export class WebAuthnService {
       },
       pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
       authenticatorSelection: {
-        authenticatorAttachment: "platform",
+        authenticatorAttachment: "cross-platform",
         requireResidentKey: true,
       },
       timeout: 100000,

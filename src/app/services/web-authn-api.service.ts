@@ -2,18 +2,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { ClientDataObj, DecodedAttestionObj } from 'src/app/models/web-authn.model';
-import { MockService } from './mock-service';
+import { MockService } from 'src/app/services/mock.service';
 import * as CBOR from 'src/app/utils/cbor';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import { of } from 'rxjs';
-import { loginPayload, registerPayload } from '../utils/app-util';
+import { loginPayload, registerPayload } from '../components/web-authn/utils/app-util';
 @Injectable()
-export class TestService {
+export class WebAuthnAPIService {
     private url = '';
     private baseUrl = 'http://localhost:8080';
     constructor(public http: HttpClient, private mockService: MockService) {
     }
-    
 
     webAuthnRegister(): Observable<any> {
         this.url = `${this.baseUrl}/web-authn-registration`;

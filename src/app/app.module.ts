@@ -11,8 +11,9 @@ import { HttpClientModule} from '@angular/common/http';
 import { PushNotificationComponent } from './push-notification/push-notification.component';
 import { WebAuthnMockComponent } from './components/web-authn-mock/web-authn-mock.component';
 import { WebAuthnComponent } from './components/web-authn/web-authn.component';
-import { TestService } from './components/web-authn/service/test-service';
-import { MockV2Service } from './components/web-authn/service/mockV2-service';
+import { WebAuthnAPIService } from './services/web-authn-api.service';
+import { ToggleSwitchComponent } from './components/toggle-switch/toggle-switch.component';
+import { WebAuthnService } from './services/web-authn-service';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { MockV2Service } from './components/web-authn/service/mockV2-service';
     WebAuthnComponent,
     PwaInstallPromotionComponent,
     PushNotificationComponent,
-    WebAuthnMockComponent
+    WebAuthnMockComponent,
+    ToggleSwitchComponent
   ],
   imports: [
     BrowserModule,
@@ -31,7 +33,7 @@ import { MockV2Service } from './components/web-authn/service/mockV2-service';
     ServiceWorkerModule.register('ngsw-worker-modified.js', { enabled: environment.production }),    
     HttpClientModule
   ],
-  providers: [TestService, MockV2Service],
+  providers: [WebAuthnAPIService, WebAuthnService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

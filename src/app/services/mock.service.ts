@@ -55,6 +55,11 @@ export class MockService {
         this.saveChanges();
     }
 
+    resetUser() {
+        this.userList = [];
+        this.saveChanges();
+    }
+
     getUserIndex(user: User) {
         return this.userList.findIndex(item => item.mobileNumber === user.mobileNumber);
     }
@@ -210,7 +215,7 @@ export class MockService {
         let clientDataObj: ClientDataObj = JSON.parse(clientDataStr);
         console.log("----------Sign in clientDataObj----------")
         console.log(JSON.stringify(clientDataObj));
-        const userHandle = this.arrayBufferToStr(assertion.response.userHandle);
+        const userHandle = assertion.response.userHandle && this.arrayBufferToStr(assertion.response.userHandle);
         console.log("----------User Handle----------")
         console.log(userHandle);
     }
@@ -254,4 +259,5 @@ export class MockService {
     {
         return Uint8Array.from(window.atob(base64), (v) => v.charCodeAt(0));
     }
+    
 }

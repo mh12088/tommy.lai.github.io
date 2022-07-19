@@ -25,6 +25,7 @@ export interface User {
     mobileNumber?: string;
     credentials?: Credential[];
     deviceId?: string;
+    authenticatorString?: string;
 }
 
 export interface DecodedPublicKeyCredential {

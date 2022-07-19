@@ -2,12 +2,15 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { from, of } from 'rxjs';
 import { DecodedAttestionObj, User } from 'src/app/models/web-authn.model';
-import { MockService } from './mock-service';
+import { MockService } from 'src/app/services/mock.service';
 import * as CBOR from 'src/app/utils/cbor';
 import { catchError, finalize, switchMap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 @Injectable()
-export class MockV2Service {
-    constructor(private mockService: MockService) {
+export class WebAuthnService {
+    private url = '';
+    private baseUrl = 'http://localhost:8080';
+    constructor(public http: HttpClient, private mockService: MockService) {
     }
 
     private generateUUIDv4() {
@@ -60,14 +63,43 @@ export class MockV2Service {
         return base64;
     }
 
+    private base64urlDecode(base64) {
+        let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+        // Use a lookup table to find the index.
+        var lookup = new Uint8Array(256);
+        for (let i = 0; i < chars.length; i++) {
+            lookup[chars.charCodeAt(i)] = i;
+        }
+        let bufferLength = base64.length * 0.75,
+            len = base64.length, i, p = 0,
+            encoded1, encoded2, encoded3, encoded4;
+
+        let arraybuffer = new ArrayBuffer(bufferLength),
+            bytes = new Uint8Array(arraybuffer);
+
+        for (i = 0; i < len; i += 4) {
+            encoded1 = lookup[base64.charCodeAt(i)];
+            encoded2 = lookup[base64.charCodeAt(i + 1)];
+            encoded3 = lookup[base64.charCodeAt(i + 2)];
+            encoded4 = lookup[base64.charCodeAt(i + 3)];
+
+            bytes[p++] = (encoded1 << 2) | (encoded2 >> 4);
+            bytes[p++] = ((encoded2 & 15) << 4) | (encoded3 >> 2);
+            bytes[p++] = ((encoded3 & 3) << 6) | (encoded4 & 63);
+        }
+
+        return arraybuffer;
+    };
+
     private signup(credential): Observable<any> {
-        return of("signup");
+        this.url = `${this.baseUrl}/web-authn-registration`;
+        return this.http.post<any>(this.url, credential);
     }
 
     private webAuthnSignup(user: User, challenge: string): Promise<Credential> {
         const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
             // Should generate from server
-            challenge: Uint8Array.from(challenge, c => c.charCodeAt(0)),
+            challenge: Uint8Array.from('5a31ec74-8280-4f61-abf0-810aab460570', c => c.charCodeAt(0)),
             // Relying Party
             rp: {
                 name: "demo",
@@ -81,7 +113,7 @@ export class MockV2Service {
             },
             pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
             authenticatorSelection: {
-                authenticatorAttachment: "platform",
+                // authenticatorAttachment: "platform",
                 userVerification: "required"
             },
             timeout: 100000,
@@ -93,20 +125,21 @@ export class MockV2Service {
     }
 
     private signin(credential): Observable<any> {
-        return of("signin");
+        this.url = `${this.baseUrl}/web-authn-authentication`;
+        return this.http.post<any>(this.url, credential);
     }
 
     private webAuthnSignin(user: User, challenge: string): Promise<Credential> {
         const allowCredentials: PublicKeyCredentialDescriptor[] = user.credentials.map(c => {
+            const credentialId = new Uint8Array(this.base64urlDecode(c.credentialIdString));
             return {
-                transports: ['internal'], type: 'public-key',
-                // id: new Uint8Array(this.mockService.base64ToArrayBuffer(c.credentialIdString))
-                id: Uint8Array.from(c.credentialId),
+                transports: ['usb'], type: 'public-key', id: credentialId
+                // id: Uint8Array.from(c.credentialId),
             };
         });
 
         const credentialRequestOptions: PublicKeyCredentialRequestOptions = {
-            challenge: Uint8Array.from(challenge, c => c.charCodeAt(0)),
+            challenge: Uint8Array.from('5a31ec74-8280-4f61-abf0-810aab460570', c => c.charCodeAt(0)),
             allowCredentials,
             userVerification: "required"
         };
@@ -150,7 +183,7 @@ export class MockV2Service {
                     this.webAuthnSignup(user, challenge)
                         .then((credential: any) => {
                             const credentialBase64Url = this.publicKeyCredentialToBase64Url(credential);
-                            Promise.resolve(credentialBase64Url)
+                            return Promise.resolve(credentialBase64Url)
                         })
                         .catch(error => Promise.reject(error))
                 )
@@ -162,23 +195,23 @@ export class MockV2Service {
                 // handle error
                 return of(error);
             }),
-            finalize(() => console.log("test"))
+            finalize(() => console.log("Finished"))
         );
     };
 
-    signinFlow(user: any): Observable<any> {
+    signinFlow(user: User): Observable<any> {
         return this.getChallenge().pipe(
             switchMap(challenge => {
                 return from(this.webAuthnSignin(user, challenge)
                     .then(assertion => {
                         const credentialBase64Url = this.publicKeyCredentialToBase64Url(assertion);
-                        Promise.resolve(credentialBase64Url);
+                        return Promise.resolve(credentialBase64Url);
                     })
                     .catch(error => Promise.reject(error))
                 )
             }),
             switchMap(credentialBase64Url => {
-                return this.signin(credentialBase64Url);
+                return this.signin({...credentialBase64Url, authenticator: this.publicKeyCredentialToBase64Url(user.authenticatorString)});
             }),
             catchError(error => {
                 // handle error 

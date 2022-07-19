@@ -5,7 +5,7 @@ import { MockService } from './mock.service';
 @Injectable({
     providedIn: 'root'
 })
-export class WebAuthnService {
+export class WebAuthnMockService {
 
     constructor(private mockService: MockService) { }
     signup(user: User): Promise<Credential> {
@@ -28,8 +28,7 @@ export class WebAuthnService {
             },
             pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
             authenticatorSelection: {
-                authenticatorAttachment: "cross-platform",
-                requireResidentKey: true,
+                authenticatorAttachment: 'cross-platform',
             },
             timeout: 100000,
             attestation: 'direct'
@@ -44,7 +43,7 @@ export class WebAuthnService {
     signin(user: User): Promise<Credential> {
         const allowCredentials: PublicKeyCredentialDescriptor[] = user.credentials.map(c => {
             return {
-                transports: ['internal'], type: 'public-key', id: new Uint8Array(this.mockService.base64ToArrayBuffer(c.credentialIdString))
+                transports: ['usb'], type: 'public-key', id: new Uint8Array(this.mockService.base64ToArrayBuffer(c.credentialIdString))
                 // id: Uint8Array.from(c.credentialId)
             };
         });

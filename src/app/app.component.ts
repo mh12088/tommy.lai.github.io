@@ -12,16 +12,21 @@ import { FireBaseService } from './push-notification/service/firebase.service';
 })
 export class AppComponent implements OnInit {
   title = 'biometric-login-demo';
-
-  constructor(private _$gaService: GoogleAnalyticsService, private _$firebaseService: FireBaseService) { }
+  isMock: boolean;
+  constructor() { }
 
   ngOnInit() {
-    this._$gaService.init();
+    // this._$gaService.init();
     const deviceId = uuid.v4();
     if (!localStorage.getItem("device_id")) {
       localStorage.setItem("device_id", deviceId);
     };
+    this.isMock = localStorage.getItem('isMock') === 'true' ? true : false;
 
-    this._$firebaseService.init();
+    // this._$firebaseService.init();
+  }
+
+  updateIsMockFlag(event) {
+    this.isMock = event;
   }
 }

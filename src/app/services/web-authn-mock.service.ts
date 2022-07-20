@@ -8,7 +8,12 @@ import { MockService } from './mock.service';
 export class WebAuthnMockService {
 
     constructor(private mockService: MockService) { }
+    private getPlatformFlag(): boolean {
+        return !!JSON.parse(localStorage.getItem('isPlatform'));
+    }
+
     signup(user: User): Promise<Credential> {
+        const authenticatorAttachment = this.getPlatformFlag() ? 'platform' : 'cross-platform';
         const challenge: string = this.mockService.genUUID();
         console.log("----------Sign up challenge----------");
         console.log(challenge);
@@ -28,7 +33,7 @@ export class WebAuthnMockService {
             },
             pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
             authenticatorSelection: {
-                authenticatorAttachment: 'cross-platform',
+                authenticatorAttachment
             },
             timeout: 100000,
             attestation: 'direct'
@@ -41,9 +46,10 @@ export class WebAuthnMockService {
     }
 
     signin(user: User): Promise<Credential> {
+        const transports: AuthenticatorTransport[] = this.getPlatformFlag() ? ['internal'] : ['usb'];
         const allowCredentials: PublicKeyCredentialDescriptor[] = user.credentials.map(c => {
             return {
-                transports: ['usb'], type: 'public-key', id: new Uint8Array(this.mockService.base64ToArrayBuffer(c.credentialIdString))
+                transports, type: 'public-key', id: new Uint8Array(this.mockService.base64ToArrayBuffer(c.credentialIdString))
                 // id: Uint8Array.from(c.credentialId)
             };
         });

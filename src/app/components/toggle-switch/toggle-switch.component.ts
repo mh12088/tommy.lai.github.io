@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { MockService } from 'src/app/services/mock.service';
 
@@ -8,22 +8,31 @@ import { MockService } from 'src/app/services/mock.service';
   styleUrls: ['./toggle-switch.component.scss']
 })
 export class ToggleSwitchComponent implements OnInit {
-  isMock: boolean;
-  @Output() isMockEvent = new EventEmitter<boolean>();
+  @Input()
+  flagName: string;
+  isChecked: boolean;
+  @Output() callback = new EventEmitter<boolean>();
   constructor(private mockService: MockService) { }
 
   ngOnInit(): void {
-    this.isMock = localStorage.getItem('isMock') === 'true' ? true : false;
+    this.isChecked = !!JSON.parse(localStorage.getItem(this.flagName));
   }
 
 
   onChange() {
-    this.isMock = !this.isMock;
-    localStorage.setItem('isMock', `${this.isMock}`);
-    localStorage.removeItem('deviceId');
-    localStorage.removeItem('user_list');
-    this.isMockEvent.emit(this.isMock);
-    this.mockService.resetUser();
+    this.isChecked = !this.isChecked;
+    switch (this.flagName) {
+      case 'isMock':
+        localStorage.setItem(this.flagName, JSON.stringify(this.isChecked));
+        localStorage.removeItem('deviceId');
+        localStorage.removeItem('user_list');
+        this.callback.emit(this.isChecked);
+        this.mockService.resetUser();
+        break;
+      default:
+        localStorage.setItem(this.flagName, JSON.stringify(this.isChecked));
+        break;
+    }
   }
 
 }

@@ -304,8 +304,10 @@
 <div class="content" role="main">
   <!-- <app-push-notification></app-push-notification> -->
   <!-- <app-pwa-install-promotion></app-pwa-install-promotion> -->
-  
-  <app-toggle-switch (isMockEvent)="updateIsMockFlag($event);"></app-toggle-switch>
+  <div style="display: flex;">
+    <app-toggle-switch (callback)="updateIsMockFlag($event);" [flagName]="'isMock'"></app-toggle-switch>
+    <app-toggle-switch  style="margin-left: 50px;" [flagName]="'isPlatform'"></app-toggle-switch>
+  </div>
   <ng-container *ngIf="!isMock">
     <app-web-authn></app-web-authn>
   </ng-container>

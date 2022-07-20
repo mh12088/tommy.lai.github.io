@@ -107,49 +107,14 @@ export class WebAuthnComponent implements OnInit {
     } else {
       userFromDB = this.mockService.getUserByDeviceId(this.deviceId);
     };
-
-    this.webAuthnService.signinFlow(userFromDB).subscribe(response => {
-      console.log(response);
-    })
     console.log("----------Saved User:----------");
     console.log(JSON.stringify(userFromDB));
-
-    
-    // this.webAuthnService.webAuthnSignin(userFromDB)
-    //   .then((assertion: any) => {
-    //     alert("Authentication Successful");
-    //     console.log("----------Assertion response----------");
-    //     console.log(assertion);
-    //     // const obj = {
-    //     //   id: assertion.id,
-    //     //   type: assertion.type,
-    //     //   response: {
-    //     //     authenticatorData: null,
-    //     //     clientDataJSON: null,
-    //     //     signature: null,
-    //     //     userHandle: null,
-    //     //   },
-    //     //   rawId: null
-    //     // };
-    //     // obj.response.authenticatorData = new Uint8Array(assertion.response.authenticatorData);
-    //     // obj.response.clientDataJSON = new Uint8Array(assertion.response.clientDataJSON);
-    //     // obj.response.signature = new Uint8Array(assertion.response.signature);
-    //     // obj.response.userHandle = new Uint8Array(assertion.response.userHandle);
-    //     // obj.rawId = new Uint8Array(assertion.rawId);
-    //     // console.log(JSON.stringify(obj));
-    //     // this.mockService.decodeAssertion(assertion);
-    //     // TODO: Call server to validate assertion
-    //     // When server return ok,login successful else login failed
-
-    //     console.log("---------Public key Resonse(URLBase64)----------");
-    //     const urlbase64 = this.mockService.decodePublicKeyCredentialToBase64String(assertion);
-    //     console.log(JSON.stringify(urlbase64));
-    //   })
-    //   .catch((error) => {
-    //     alert("Authentication Failed");
-    //     this.errorMsg = error;
-    //     console.log("Authentication Failed: ", error);
-    //   });
+    this.webAuthnService.signinFlow(userFromDB).subscribe(response => {
+      if(response == 'success') {
+        alert("Login Successful");
+      }
+      console.log(response);
+    })
   }
 
 

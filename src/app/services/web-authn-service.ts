@@ -13,6 +13,9 @@ export class WebAuthnService {
     constructor(public http: HttpClient, private mockService: MockService) {
     }
 
+    private getPlatformFlag(): boolean {
+        return !!JSON.parse(localStorage.getItem('isPlatform'));
+    }
     private generateUUIDv4() {
         return (`${[1e7]}${-1e3}${-4e3}${-8e3}${-1e11}`).replace(/[018]/g, (c: any) =>
             (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
@@ -97,6 +100,7 @@ export class WebAuthnService {
     }
 
     private webAuthnSignup(user: User, challenge: string): Promise<Credential> {
+        const authenticatorAttachment = this.getPlatformFlag() ? 'platform' : 'cross-platform';
         const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
             // Should generate from server
             challenge: Uint8Array.from('5a31ec74-8280-4f61-abf0-810aab460570', c => c.charCodeAt(0)),
@@ -113,7 +117,7 @@ export class WebAuthnService {
             },
             pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
             authenticatorSelection: {
-                // authenticatorAttachment: "platform",
+                authenticatorAttachment,
                 userVerification: "required"
             },
             timeout: 100000,
@@ -130,10 +134,11 @@ export class WebAuthnService {
     }
 
     private webAuthnSignin(user: User, challenge: string): Promise<Credential> {
+        const transports: AuthenticatorTransport[] = this.getPlatformFlag() ? ['internal'] : ['usb'];
         const allowCredentials: PublicKeyCredentialDescriptor[] = user.credentials.map(c => {
             const credentialId = new Uint8Array(this.base64urlDecode(c.credentialIdString));
             return {
-                transports: ['usb'], type: 'public-key', id: credentialId
+                transports, type: 'public-key', id: credentialId
                 // id: Uint8Array.from(c.credentialId),
             };
         });
@@ -205,13 +210,18 @@ export class WebAuthnService {
                 return from(this.webAuthnSignin(user, challenge)
                     .then(assertion => {
                         const credentialBase64Url = this.publicKeyCredentialToBase64Url(assertion);
+                        credentialBase64Url.response.userHandle = credentialBase64Url.response.userHandle || '';
+                        credentialBase64Url.authenticator = {
+                            credentialIdString: user.credentials[0].credentialIdString,
+                            authenticatorString: user.authenticatorString
+                        };
                         return Promise.resolve(credentialBase64Url);
                     })
                     .catch(error => Promise.reject(error))
                 )
             }),
             switchMap(credentialBase64Url => {
-                return this.signin({...credentialBase64Url, authenticator: this.publicKeyCredentialToBase64Url(user.authenticatorString)});
+                return this.signin(credentialBase64Url);
             }),
             catchError(error => {
                 // handle error 

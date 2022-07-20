@@ -19,7 +19,6 @@ export class WebAuthnMockComponent implements OnInit {
     isEnableBiometricLogin: new FormControl(),
   });
   deviceId: string;
-  isRegistered: boolean = false;
   savedCredentialId: Uint8Array;
   authenticator: any = {};
 
@@ -43,10 +42,6 @@ export class WebAuthnMockComponent implements OnInit {
   ngOnInit(): void {
     this.userList = this.mockService.getAllUser();
     this.deviceId = localStorage.getItem("device_id") || "";
-    if (this.deviceId) {
-      const user = this.userList.find(user => user.deviceId === this.deviceId);
-      if (user && user.credentials.length > 0) this.isRegistered = true;
-    }
   }
 
   enableBiometricLogin(user: User): void {

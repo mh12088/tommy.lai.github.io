@@ -26,6 +26,11 @@ export class WebAuthnService {
         return of(this.generateUUIDv4());
     }
 
+    private getChallengeFromServer(): Observable<any> {
+        this.url = `${this.baseUrl}/get-challenge`;
+        return this.http.get<any>(this.url);
+    }
+
     private publicKeyCredentialToBase64Url(publicKeyCred) {
         if (publicKeyCred instanceof ArrayBuffer) {
             return this.base64urlEncode(publicKeyCred);
@@ -103,7 +108,7 @@ export class WebAuthnService {
         const authenticatorAttachment = this.getPlatformFlag() ? 'platform' : 'cross-platform';
         const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
             // Should generate from server
-            challenge: Uint8Array.from('5a31ec74-8280-4f61-abf0-810aab460570', c => c.charCodeAt(0)),
+            challenge: Uint8Array.from(challenge, c => c.charCodeAt(0)),
             // Relying Party
             rp: {
                 name: "demo",
@@ -182,8 +187,10 @@ export class WebAuthnService {
     };
 
     signupFlow(user): Observable<any> {
-        return this.getChallenge().pipe(
-            switchMap(challenge => {
+        return this.getChallengeFromServer().pipe(
+            switchMap(challengeResp => {
+                const { challenge } = challengeResp;
+                console.log(challenge);
                 return from(
                     this.webAuthnSignup(user, challenge)
                         .then((credential: any) => {
@@ -205,8 +212,10 @@ export class WebAuthnService {
     };
 
     signinFlow(user: User): Observable<any> {
-        return this.getChallenge().pipe(
-            switchMap(challenge => {
+        return this.getChallengeFromServer().pipe(
+            switchMap(challengeResp => {
+                const { challenge } = challengeResp;
+                console.log(challenge);
                 return from(this.webAuthnSignin(user, challenge)
                     .then(assertion => {
                         const credentialBase64Url = this.publicKeyCredentialToBase64Url(assertion);

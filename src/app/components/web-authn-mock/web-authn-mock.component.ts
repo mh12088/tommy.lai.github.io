@@ -21,6 +21,7 @@ export class WebAuthnMockComponent implements OnInit {
   deviceId: string;
   savedCredentialId: Uint8Array;
   authenticator: any = {};
+  isSupportBiometricLogin$: Observable<boolean>;
 
   constructor(
     private mockService: MockService,
@@ -42,6 +43,7 @@ export class WebAuthnMockComponent implements OnInit {
   ngOnInit(): void {
     this.userList = this.mockService.getAllUser();
     this.deviceId = localStorage.getItem("device_id") || "";
+    this.isSupportBiometricLogin$ = this.isSupportBiometricLogin();
   }
 
   enableBiometricLogin(user: User): void {

@@ -38,6 +38,9 @@
         <div>
             <button class="btn" (click)="signup()"[disabled]="userForm.invalid">Register</button>
         </div>
+        <div *ngIf="isSupportBiometricLogin$ | async">
+            <button class="btn">Is Support Biometic Button</button>
+        </div>
     </form>
     <ng-container *ngIf="errorMsg">
         <p class="red errorMsg">

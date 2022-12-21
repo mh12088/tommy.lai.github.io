@@ -3359,6 +3359,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               type: 'public-key'
             }],
             authenticatorSelection: {
+              // authenticatorAttachment,
               authenticatorAttachment: 'platform',
               userVerification: 'required'
             },
@@ -3379,7 +3380,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var transports = this.getPlatformFlag() ? ['internal'] : ['usb'];
           var allowCredentials = user.credentials.map(function (c) {
             return {
-              transports: transports,
+              // transports, 
+              transports: ['internal'],
               type: 'public-key',
               id: new Uint8Array(_this6.mockService.base64ToArrayBuffer(c.credentialIdString)) // id: Uint8Array.from(c.credentialId)
 

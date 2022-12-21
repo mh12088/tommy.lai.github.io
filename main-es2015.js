@@ -1885,6 +1885,7 @@ class WebAuthnMockService {
             },
             pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
             authenticatorSelection: {
+                // authenticatorAttachment,
                 authenticatorAttachment: 'platform',
                 userVerification: 'required'
             },
@@ -1901,7 +1902,9 @@ class WebAuthnMockService {
         const transports = this.getPlatformFlag() ? ['internal'] : ['usb'];
         const allowCredentials = user.credentials.map(c => {
             return {
-                transports, type: 'public-key', id: new Uint8Array(this.mockService.base64ToArrayBuffer(c.credentialIdString))
+                // transports, 
+                transports: ['internal'],
+                type: 'public-key', id: new Uint8Array(this.mockService.base64ToArrayBuffer(c.credentialIdString))
                 // id: Uint8Array.from(c.credentialId)
             };
         });

@@ -33,7 +33,8 @@ export class WebAuthnMockService {
             },
             pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
             authenticatorSelection: {
-                authenticatorAttachment
+                authenticatorAttachment: 'platform',
+                userVerification: 'required'
             },
             timeout: 100000,
             attestation: 'direct'
@@ -60,6 +61,7 @@ export class WebAuthnMockService {
         const credentialRequestOptions: PublicKeyCredentialRequestOptions = {
             challenge: Uint8Array.from(challenge, c => c.charCodeAt(0)),
             allowCredentials,
+            userVerification: 'required'
         };
         console.log("----------Sign in Payload----------")
         console.log(JSON.stringify(credentialRequestOptions));
